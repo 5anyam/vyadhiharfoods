@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState } from 'react';
 import { 
-  Crown, Shield, Star, Gift, Clock, Award
+  Leaf, Zap, Heart, Sprout, Award, Users
 } from 'lucide-react';
 
 type Feature = {
@@ -16,145 +18,166 @@ type FeatureCardProps = {
   onLeave: () => void;
 };
 
-const FeatureCard = ({ item, isHovered, onHover, onLeave }: FeatureCardProps) => (
-  <div 
-    className={`group bg-white rounded-lg p-8 transition-all duration-300 cursor-pointer border border-gray-200 hover:border-gray-300 hover:shadow-md ${
-      isHovered ? 'shadow-md border-gray-300' : ''
-    }`}
-    onMouseEnter={onHover}
-    onMouseLeave={onLeave}
-  >
-    <div className="mb-6 flex justify-center">
-      <div className="p-3 rounded-full border border-gray-200 bg-gray-50">
-        {item.icon}
+// FeatureCard Component - Separate export
+function FeatureCard({ item, isHovered, onHover, onLeave }: FeatureCardProps) {
+  return (
+    <div 
+      className={`group bg-white rounded-lg p-8 transition-all duration-300 cursor-pointer border border-[#6B8E23]/20 hover:border-[#6B8E23] hover:shadow-lg ${
+        isHovered ? 'shadow-lg border-[#6B8E23] bg-[#F4F4F0]' : ''
+      }`}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+    >
+      <div className="mb-6 flex justify-center">
+        <div className="p-3 rounded-full border-2 border-[#6B8E23]/30 bg-[#6B8E23]/5">
+          {item.icon}
+        </div>
       </div>
+      <h3 className="text-lg font-semibold text-[#556B2F] mb-3 text-center tracking-wide">
+        {item.title}
+      </h3>
+      <p className="text-sm text-gray-700 text-center leading-relaxed font-light">
+        {item.desc}
+      </p>
     </div>
-    <h3 className="text-lg font-light text-gray-900 mb-3 text-center tracking-wide">
-      {item.title}
-    </h3>
-    <p className="text-sm text-gray-600 text-center leading-relaxed font-light">
-      {item.desc}
-    </p>
-  </div>
-);
+  );
+}
 
+// Main AboutUsSection Component
 export default function AboutUsSection() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-  const features: Feature[] = [
+  const philosophy: Feature[] = [
     {
-      icon: <Crown className="text-gray-700 w-6 h-6" />,
-      title: 'Luxury Craftsmanship',
-      desc: 'Each fragrance is meticulously crafted using premium ingredients and artisan techniques for an unparalleled olfactory experience.',
+      icon: <Leaf className="text-[#6B8E23] w-6 h-6" />,
+      title: 'Pure & Natural',
+      desc: 'We believe in the power of nature. All our dry fruits and snacks are 100% natural with no artificial additives or preservatives.',
     },
     {
-      icon: <Clock className="text-gray-700 w-6 h-6" />,
-      title: 'Long-Lasting Formula',
-      desc: 'Premium EDP concentration ensures your signature scent lingers beautifully throughout the day.',
+      icon: <Zap className="text-[#6B8E23] w-6 h-6" />,
+      title: 'Energy & Wellness',
+      desc: 'Packed with essential nutrients, vitamins, and minerals that fuel your body and support a healthy lifestyle.',
     },
     {
-      icon: <Star className="text-gray-700 w-6 h-6" />,
-      title: 'Unisex Appeal',
-      desc: 'Expertly balanced fragrances that captivate regardless of gender - true luxury knows no boundaries.',
+      icon: <Heart className="text-[#6B8E23] w-6 h-6" />,
+      title: 'Health First',
+      desc: 'We prioritize your wellbeing by handpicking the finest quality produce and maintaining rigorous quality standards.',
     }
   ];
 
-  const values: Feature[] = [
+  const commitment: Feature[] = [
     {
-      icon: <Shield className="text-gray-700 w-6 h-6" />,
-      title: 'Authentic Quality',
-      desc: 'Every bottle represents our commitment to excellence and authenticity in luxury fragrance.',
+      icon: <Sprout className="text-[#6B8E23] w-6 h-6" />,
+      title: 'Organic Excellence',
+      desc: 'Every product is lab-tested and sourced from premium suppliers to ensure the highest nutritional value.',
     },
     {
-      icon: <Gift className="text-gray-700 w-6 h-6" />,
-      title: 'Elegant Presentation',
-      desc: 'Each bottle is a work of art, perfect for gifting or adding sophistication to your collection.',
+      icon: <Award className="text-[#6B8E23] w-6 h-6" />,
+      title: 'Quality Assurance',
+      desc: 'From farm to table, we maintain strict quality control at every step to deliver only the best to your doorstep.',
     },
     {
-      icon: <Award className="text-gray-700 w-6 h-6" />,
-      title: 'Customer Trust',
-      desc: 'Trusted by discerning customers worldwide for our dedication to quality and service.',
+      icon: <Users className="text-[#6B8E23] w-6 h-6" />,
+      title: 'Customer Care',
+      desc: 'Your satisfaction is our mission. We are dedicated to providing exceptional service and authentic products.',
     }
   ];
 
   return (
     <section className="bg-white py-20 lg:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl text-center lg:text-5xl font-light text-gray-900 mb-6 tracking-wide">
-            The Art of Luxury Fragrance
-          </h2>
-          
-          <div className="w-16 h-px bg-gray-300 mx-auto mb-8"></div>
-          
-          <p className="text-base lg:text-lg text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
-            At EDA Perfumes, we craft sophisticated fragrances that embody elegance and refinement. 
-            Each scent is a carefully composed symphony of premium notes, designed for those who appreciate 
-            the finer things in life.
-          </p>
-        </div>
+        <h2 className="text-3xl sm:text-4xl text-center lg:text-5xl font-bold text-[#556B2F] mb-6 tracking-wide">
+          About Vyadhihar Foods
+        </h2>
+        
+        <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-8 rounded-full"></div>
+        
+        <p className="text-base lg:text-lg text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+          At Vyadhihar Foods, we are committed to bringing the finest quality dry fruits, makhana snacks, 
+          and mixed fresh fruits to your table. With a passion for health and wellness, we source, process, 
+          and deliver premium natural products that nourish your body and delight your taste buds.
+        </p>
+      </div>
 
-        {/* Philosophy Section */}
-        <div className="mb-20 lg:mb-24">
+      {/* Philosophy Section */}
+      <div className="mb-20 lg:mb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 mb-4 tracking-wide">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#556B2F] mb-4 tracking-wide">
               Our Philosophy
             </h3>
-            <div className="w-16 h-px bg-gray-300 mx-auto"></div>
+            <div className="w-20 h-1 bg-[#F4A460] mx-auto rounded-full"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {features.map((item, index) => (
+            {philosophy.map((item, index) => (
               <FeatureCard 
-                key={index}
+                key={`philosophy-${index}`}
                 item={item}
-                isHovered={hoveredCard === `feature-${index}`}
-                onHover={() => setHoveredCard(`feature-${index}`)}
+                isHovered={hoveredCard === `philosophy-${index}`}
+                onHover={() => setHoveredCard(`philosophy-${index}`)}
                 onLeave={() => setHoveredCard(null)}
               />
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Values Section */}
-        <div className="mb-16">
+      {/* Values Section */}
+      <div className="mb-16 bg-gradient-to-b from-[#F4F4F0] to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 mb-4 tracking-wide">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#556B2F] mb-4 tracking-wide">
               Our Commitment
             </h3>
-            <div className="w-16 h-px bg-gray-300 mx-auto mb-6"></div>
-            <p className="text-base text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
-              We believe fragrance is more than scent - it is an expression of identity, 
-              confidence, and personal style.
+            <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-6 rounded-full"></div>
+            <p className="text-base text-gray-700 max-w-2xl mx-auto font-light leading-relaxed">
+              We believe that quality nutrition should be accessible to everyone. That's why we bring 
+              premium dry fruits and healthy snacks directly to your home, ensuring freshness and purity at every step.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {values.map((item, index) => (
+            {commitment.map((item, index) => (
               <FeatureCard 
-                key={index}
+                key={`commitment-${index}`}
                 item={item}
-                isHovered={hoveredCard === `value-${index}`}
-                onHover={() => setHoveredCard(`value-${index}`)}
+                isHovered={hoveredCard === `commitment-${index}`}
+                onHover={() => setHoveredCard(`commitment-${index}`)}
                 onLeave={() => setHoveredCard(null)}
               />
             ))}
           </div>
         </div>
+      </div>
 
-        {/* CTA Section */}
-        <div className="text-center mt-20">
-          <div className="max-w-2xl mx-auto">
-            <h4 className="text-2xl lg:text-3xl font-light text-gray-900 mb-6 tracking-wide">
-              Discover Your Signature Scent
+      {/* CTA Section */}
+      <div className="text-center mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto bg-gradient-to-r from-[#6B8E23] to-[#556B2F] rounded-2xl p-12 text-white shadow-xl">
+            <h4 className="text-2xl lg:text-3xl font-semibold mb-6 tracking-wide">
+              🌿 Start Your Healthy Journey Today
             </h4>
-            <p className="text-gray-600 mb-8 font-light">
-              Explore our collection and find the fragrance that speaks to you.
+            <p className="text-white/90 mb-8 font-light text-lg">
+              Discover the power of nature with our premium selection of dry fruits and wholesome snacks.
             </p>
-            <button className="inline-flex items-center gap-2 px-8 py-3 text-sm font-light tracking-wide text-white bg-black hover:bg-gray-800 transition-colors duration-300 rounded-sm">
-              Explore Collection
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a 
+                href="/shop"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 text-base font-medium text-[#6B8E23] bg-white hover:bg-gray-100 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl"
+              >
+                Explore Collection
+              </a>
+              <a 
+                href="/corporate"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 text-base font-medium text-white border-2 border-white hover:bg-white/10 transition-all duration-300 rounded-lg"
+              >
+                Shop Corporate Gifts
+              </a>
+            </div>
           </div>
         </div>
+      </div>
     </section>
   );
 }

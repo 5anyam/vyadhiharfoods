@@ -2,40 +2,56 @@
 
 import Slider from 'react-slick';
 import Image from 'next/image';
-import { Star } from 'lucide-react';
+import { Star, Leaf } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Priya Sharma',
-    quote: "Bite Me is absolutely intoxicating. The scent is seductive yet elegant - perfect for evening occasions. It lasts all night and makes me feel incredibly confident.",
+    name: 'Anjali Verma',
+    quote: "The quality of almonds from Vyadhihar is exceptional. They're fresh, perfectly roasted, and have become a daily part of my healthy routine. Highly recommended!",
     image: '/users/parul.avif',
     rating: 5,
-    perfume: 'Bite Me',
+    product: 'Premium Almonds',
     location: 'Mumbai'
   },
   {
-    name: 'Arjun Khanna',
-    quote: "Dark Knight has become my signature scent. It's bold, masculine, and mysterious. My colleagues always ask what fragrance I'm wearing.",
+    name: 'Rajesh Kumar',
+    quote: "I buy their makhana snacks for my family. The taste is amazing, completely natural, and the crunch is perfect. No artificial flavors whatsoever.",
     image: '/users/anil-tyagi.jpeg',
     rating: 5,
-    perfume: 'Dark Knight',
+    product: 'Roasted Makhana',
     location: 'Delhi'
   },
   {
-    name: 'Kavya Patel',
-    quote: "Midnight Desire is pure elegance in a bottle. The fragrance is sophisticated and alluring. I feel more confident and captivating when I wear it.",
+    name: 'Priya Desai',
+    quote: "Best cashews I've ever tasted! Vyadhihar's commitment to quality is evident in every bite. They're crispy, flavorful, and worth every penny.",
     image: '/users/savita.webp',
     rating: 5,
-    perfume: 'Midnight Desire',
+    product: 'Cashew Nuts',
     location: 'Bangalore'
   },
   {
-    name: 'Rohit Singh',
-    quote: "Lusty Nights is incredible. The blend of spicy and woody notes is perfect. Great longevity and projection.",
+    name: 'Vikram Singh',
+    quote: "Their mixed dried fruits are perfect for my post-workout snack. Natural energy boost and incredibly healthy. Great customer service too!",
     image: '/users/ankit.jpeg',
     rating: 5,
-    perfume: 'Lusty Nights',
+    product: 'Mixed Dried Fruits',
     location: 'Pune'
+  },
+  {
+    name: 'Meera Nair',
+    quote: "I ordered their gift hamper for corporate gifting. The presentation was elegant and everyone loved it. Truly a premium product!",
+    image: '/users/parul.avif',
+    rating: 5,
+    product: 'Premium Gift Hamper',
+    location: 'Hyderabad'
+  },
+  {
+    name: 'Arun Iyer',
+    quote: "Walnuts from Vyadhihar are always fresh and of superior quality. I've been buying for 6 months now and never disappointed. Consistent excellence!",
+    image: '/users/anil-tyagi.jpeg',
+    rating: 5,
+    product: 'Walnuts',
+    location: 'Chennai'
   }
 ];
 
@@ -45,7 +61,7 @@ const TestimonialsCarousel = () => {
     infinite: true,
     speed: 600,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 5000,
     slidesToShow: 3,
     slidesToScroll: 1,
     arrows: false,
@@ -75,8 +91,8 @@ const TestimonialsCarousel = () => {
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`w-3.5 h-3.5 ${
-              i < rating ? 'text-gray-900 fill-gray-900' : 'text-gray-300'
+            className={`w-4 h-4 ${
+              i < rating ? 'text-[#6B8E23] fill-[#6B8E23]' : 'text-gray-300'
             }`}
           />
         ))}
@@ -85,16 +101,20 @@ const TestimonialsCarousel = () => {
   };
 
   return (
-    <section className="bg-white py-20 px-4">
+    <section className="bg-gradient-to-b from-white to-[#F4F4F0] py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4 tracking-wide">
-            Customer Reviews
-          </h2>
-          <div className="w-16 h-px bg-gray-300 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-sm font-light max-w-2xl mx-auto">
-            Discover why customers choose our fragrances
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Leaf className="w-6 h-6 text-[#6B8E23]" />
+            <h2 className="text-3xl md:text-4xl font-bold text-[#556B2F] tracking-wide">
+              Customer Reviews
+            </h2>
+            <Leaf className="w-6 h-6 text-[#6B8E23]" />
+          </div>
+          <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-4 rounded-full"></div>
+          <p className="text-gray-700 text-base font-light max-w-2xl mx-auto">
+            Thousands of satisfied customers trust Vyadhihar Foods for premium quality and natural goodness
           </p>
         </div>
 
@@ -102,12 +122,12 @@ const TestimonialsCarousel = () => {
         <div className="testimonials-slider">
           <Slider {...settings}>
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="px-3">
-                <div className="bg-white border border-gray-200 p-8 min-h-[380px] flex flex-col hover:shadow-md transition-shadow duration-300">
+              <div key={index} className="px-4">
+                <div className="bg-white border-2 border-[#6B8E23]/20 p-8 min-h-[420px] flex flex-col hover:shadow-lg hover:border-[#6B8E23] transition-all duration-300 rounded-lg">
                   
                   {/* Profile Section */}
                   <div className="flex flex-col items-center mb-6">
-                    <div className="w-16 h-16 rounded-full bg-gray-200 mb-4 overflow-hidden">
+                    <div className="w-16 h-16 rounded-full bg-[#6B8E23]/10 mb-4 overflow-hidden border-3 border-[#6B8E23]/30">
                       <Image
                         src={testimonial.image}
                         alt={testimonial.name}
@@ -117,14 +137,14 @@ const TestimonialsCarousel = () => {
                       />
                     </div>
                     
-                    <h3 className="text-gray-900 font-light text-base mb-1">
+                    <h3 className="text-[#556B2F] font-semibold text-base mb-1">
                       {testimonial.name}
                     </h3>
-                    <p className="text-gray-500 text-xs mb-2 font-light">
+                    <p className="text-gray-600 text-xs mb-2 font-light">
                       {testimonial.location}
                     </p>
-                    <div className="text-gray-600 text-xs font-light tracking-wide">
-                      {testimonial.perfume}
+                    <div className="text-[#6B8E23] text-xs font-medium tracking-wide bg-[#6B8E23]/10 px-3 py-1 rounded-full">
+                      {testimonial.product}
                     </div>
                   </div>
 
@@ -134,7 +154,7 @@ const TestimonialsCarousel = () => {
                   </div>
 
                   {/* Quote */}
-                  <blockquote className="text-gray-700 text-sm leading-relaxed flex-1 font-light text-center">
+                  <blockquote className="text-gray-700 text-sm leading-relaxed flex-1 font-light text-center italic">
                     {testimonial.quote}
                   </blockquote>
                 </div>
@@ -144,23 +164,26 @@ const TestimonialsCarousel = () => {
         </div>
 
         {/* Bottom Stats */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-4 border border-gray-200 px-8 py-4">
-            <div className="flex -space-x-2">
-              {testimonials.slice(0, 3).map((testimonial, index) => (
+        <div className="mt-20 text-center">
+          <div className="inline-flex items-center gap-6 border-2 border-[#6B8E23]/20 bg-white px-8 py-5 rounded-lg hover:border-[#6B8E23] transition-all duration-300">
+            <div className="flex -space-x-3">
+              {testimonials.slice(0, 4).map((testimonial, index) => (
                 <Image
                   key={index}
                   src={testimonial.image}
                   alt={testimonial.name}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full border-3 border-white object-cover hover:scale-110 transition-transform"
                 />
               ))}
             </div>
             <div className="text-left">
-              <p className="text-gray-900 font-light text-sm">
-                Join 5,000+ satisfied customers
+              <p className="text-[#556B2F] font-semibold text-base">
+                10,000+ Happy Customers
+              </p>
+              <p className="text-gray-600 text-xs font-light">
+                Trusted for premium quality & natural goodness
               </p>
             </div>
           </div>
@@ -169,11 +192,11 @@ const TestimonialsCarousel = () => {
 
       <style jsx>{`
         .testimonials-slider .custom-dots {
-          bottom: -60px;
+          bottom: -50px;
           display: flex !important;
           justify-content: center;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
         }
         .testimonials-slider .custom-dots li {
           margin: 0;
@@ -181,8 +204,8 @@ const TestimonialsCarousel = () => {
           height: auto;
         }
         .testimonials-slider .custom-dots li button {
-          width: 10px;
-          height: 10px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
           background: #d1d5db;
           border: none;
@@ -193,12 +216,12 @@ const TestimonialsCarousel = () => {
           display: none;
         }
         .testimonials-slider .custom-dots li.slick-active button {
-          background: #111827;
-          width: 24px;
-          border-radius: 5px;
+          background: #6B8E23;
+          width: 28px;
+          border-radius: 6px;
         }
         .testimonials-slider .custom-dots li button:hover {
-          background: #6b7280;
+          background: #6B8E23;
         }
       `}</style>
     </section>

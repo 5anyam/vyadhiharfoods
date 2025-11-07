@@ -10,20 +10,20 @@ import { Suspense } from 'react';
 import Whatsapp from '../../components/Whatsapp';
 
 export const metadata = {
-  title: 'EDA Perfumes - Where Desire Meets Sophisticated Fragrance',
-  description: 'Dare to indulge in the forbidden. EDA Perfumes crafts seductive fragrances for the bold, the daring, and those who aren\'t afraid to make a statement. Our collection embodies the perfect balance of sophistication and temptation.',
-  keywords: 'luxury perfumes, seductive fragrances, EDP, unisex perfumes, long lasting perfumes, premium fragrances, after dark collection, signature scents, luxury perfumes India',
+  title: 'Vyadhihar Foods - Premium Dry Fruits & Natural Snacks',
+  description: 'Discover premium quality dry fruits, makhana snacks, and mixed fresh fruits. 100% natural, lab-tested, and delivered fresh. Trusted by 10,000+ customers across India.',
+  keywords: 'dry fruits online, premium almonds, cashews, walnuts, makhana snacks, dried fruits, natural snacks, healthy food, dry fruit delivery, corporate gifting',
   openGraph: {
-    title: 'EDA Perfumes - Where Desire Meets Sophisticated Fragrance',
-    description: 'Crafting seductive fragrances for those who dare to make a statement. Premium EDP collection for the bold and sophisticated.',
-    url: 'https://edaperfumes.com',
-    siteName: 'EDA Perfumes',
+    title: 'Vyadhihar Foods - Premium Quality Dry Fruits',
+    description: '100% Natural, Lab-Tested Dry Fruits & Healthy Snacks. Fast delivery across India.',
+    url: 'https://vyadhiharfoods.com',
+    siteName: 'Vyadhihar Foods',
     images: [
       {
-        url: '/eda-perfumes-logo.jpeg',
+        url: '/logo.PNG',
         width: 1200,
         height: 630,
-        alt: 'EDA Perfumes - Seductive Luxury Fragrances',
+        alt: 'Vyadhihar Foods - Premium Dry Fruits',
       },
     ],
     locale: 'en_IN',
@@ -31,10 +31,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EDA Perfumes - Where Desire Meets Sophisticated Fragrance',
-    description: 'Crafting seductive fragrances for those who dare to make a statement.',
-    images: ['/eda-perfumes-logo.jpeg'],
-    creator: '@edaperfumes',
+    title: 'Vyadhihar Foods - Premium Dry Fruits & Snacks',
+    description: '100% Natural, Lab-Tested Products. Nationwide Delivery.',
+    images: ['/logo.PNG'],
+    creator: '@vyadhiharfoods',
   },
   robots: {
     index: true,
@@ -51,13 +51,13 @@ export const metadata = {
     google: 'your-google-verification-code',
   },
   alternates: {
-    canonical: 'https://edaperfumes.com',
+    canonical: 'https://vyadhiharfoods.com',
   },
-  category: 'luxury perfumes',
-  classification: 'Beauty & Personal Care',
-  authors: [{ name: 'EDA Perfumes Team' }],
-  creator: 'EDA Perfumes',
-  publisher: 'EDA Perfumes',
+  category: 'Food & Beverages',
+  classification: 'Health & Wellness',
+  authors: [{ name: 'Vyadhihar Foods Team' }],
+  creator: 'Vyadhihar Foods',
+  publisher: 'Vyadhihar Foods',
   formatDetection: {
     email: false,
     address: false,
@@ -66,8 +66,8 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const fbPixelId = '821676445858360';
-  const gtagId = 'AW-17423060';
+  const fbPixelId = 'YOUR_FB_PIXEL_ID'; // Replace with actual Vyadhihar FB Pixel ID
+  const gtagId = 'YOUR_GTAG_ID'; // Replace with actual Vyadhihar Google Ads ID
 
   return (
     <html lang="en">
@@ -78,11 +78,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#f43f5e" />
-        <meta name="msapplication-TileColor" content="#f43f5e" />
+        <meta name="theme-color" content="#6B8E23" />
+        <meta name="msapplication-TileColor" content="#6B8E23" />
         
         {/* Preload Critical Assets */}
-        <link rel="preload" href="/eda-perfumes-logo.jpeg" as="image" type="image/jpeg" />
+        <link rel="preload" href="/logo.PNG" as="image" type="image/png" />
         
         {/* Additional SEO Meta Tags */}
         <meta name="language" content="English" />
@@ -92,58 +92,93 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="geo.region" content="IN" />
         <meta name="geo.country" content="India" />
         <meta name="target" content="all" />
-        <meta name="audience" content="all" />
-        <meta name="coverage" content="Worldwide" />
+        <meta name="audience" content="Health Conscious Consumers" />
+        <meta name="coverage" content="India" />
         
-        {/* Structured Data for Luxury Brand */}
+        {/* Structured Data for Food/Ecommerce Brand */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              "name": "EDA Perfumes",
-              "description": "Luxury perfume brand crafting seductive fragrances for the bold and sophisticated",
-              "url": "https://edaperfumes.com",
-              "logo": "https://edaperfumes.com/eda-perfumes-logo.jpeg",
-              "foundingDate": "2023",
+              "name": "Vyadhihar Foods",
+              "description": "Premium quality dry fruits, makhana snacks, and mixed fresh fruits. 100% natural, lab-tested products.",
+              "url": "https://vyadhiharfoods.com",
+              "logo": "https://vyadhiharfoods.com/logo.PNG",
+              "foundingDate": "2020",
               "founders": [
                 {
                   "@type": "Person",
-                  "name": "EDA Perfumes Founder"
+                  "name": "Vyadhihar Foods Founder"
                 }
               ],
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": "D5/204, Chintpurni House, Central Market",
-                "addressLocality": "Prashant Vihar",
+                "streetAddress": "123 Health Street",
+                "addressLocality": "Organic Market",
                 "addressRegion": "New Delhi",
-                "postalCode": "110085",
+                "postalCode": "110001",
                 "addressCountry": "IN"
               },
               "contactPoint": {
                 "@type": "ContactPoint",
-                "telephone": "+91-92116-19009",
+                "telephone": "+91-98765-43210",
                 "contactType": "customer service",
-                "email": "care@edaperfumes.com"
+                "email": "care@vyadhiharfoods.com"
               },
               "sameAs": [
-                "https://www.facebook.com/edaperfumes",
-                "https://www.instagram.com/edaperfumes",
-                "https://www.youtube.com/@edaperfumes"
+                "https://www.facebook.com/vyadhiharfoods",
+                "https://www.instagram.com/vyadhiharfoods",
+                "https://www.youtube.com/@vyadhiharfoods",
+                "https://wa.me/919876543210"
               ],
               "brand": {
                 "@type": "Brand",
-                "name": "EDA Perfumes"
+                "name": "Vyadhihar Foods",
+                "description": "Premium Quality Dry Fruits"
               },
-              "makesOffer": {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Product",
-                  "name": "Luxury Perfumes",
-                  "category": "Beauty & Personal Care",
-                  "brand": "EDA Perfumes"
-                }
+              "potentialAction": {
+                "@type": "BuyAction",
+                "target": "https://vyadhiharfoods.com/shop"
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "10000",
+                "bestRating": "5",
+                "worstRating": "1"
+              }
+            })
+          }}
+        />
+
+        {/* Product Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Product",
+              "name": "Premium Dry Fruits & Makhana Snacks",
+              "brand": {
+                "@type": "Brand",
+                "name": "Vyadhihar Foods"
+              },
+              "description": "100% Natural, Lab-Tested Dry Fruits and Healthy Snacks",
+              "category": "Food & Beverages",
+              "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "INR",
+                "lowPrice": "299",
+                "highPrice": "2999",
+                "offerCount": "50+",
+                "availability": "https://schema.org/InStock"
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "10000"
               }
             })
           }}
@@ -163,10 +198,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             fbq('init', '${fbPixelId}');
             fbq('track', 'PageView');
             
-            // Track luxury brand specific events
-            fbq('trackCustom', 'ViewLuxuryBrand', {
-              brand: 'EDA Perfumes',
-              category: 'Luxury Perfumes'
+            // Track food/ecommerce specific events
+            fbq('trackCustom', 'ViewFoodBrand', {
+              brand: 'Vyadhihar Foods',
+              category: 'Premium Dry Fruits',
+              product_type: 'Natural Snacks'
             });
           `}
         </Script>
@@ -182,13 +218,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${gtagId}', {
-              page_title: 'EDA Perfumes',
+              page_title: 'Vyadhihar Foods',
               page_location: window.location.href,
-              content_group1: 'Luxury Perfumes',
-              content_group2: 'Beauty & Personal Care',
+              content_group1: 'Premium Dry Fruits',
+              content_group2: 'Health & Wellness',
               custom_map: {
-                'dimension1': 'luxury_brand',
-                'dimension2': 'perfume_category'
+                'dimension1': 'food_ecommerce',
+                'dimension2': 'dry_fruits_category'
               }
             });
             
