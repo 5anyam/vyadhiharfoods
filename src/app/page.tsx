@@ -271,7 +271,7 @@ export default function Homepage() {
               </h2>
               <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-4 rounded-full"></div>
               <p className="text-gray-600 text-base max-w-2xl mx-auto font-light">
-                Dried apricots, figs, cranberries and more. Nature's candy packed with vitamins.
+                Dried apricots, figs, cranberries and more. Natures candy packed with vitamins.
               </p>
             </div>
 

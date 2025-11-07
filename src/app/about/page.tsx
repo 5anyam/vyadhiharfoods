@@ -107,7 +107,7 @@ export default function AboutPage() {
           </h1>
           <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-8 rounded-full"></div>
           <p className="text-base lg:text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-light">
-            Bringing nature's finest dry fruits, makhana snacks, and healthy products to your doorstep with a commitment to quality, purity, and wellness
+            Bringing natures finest dry fruits, makhana snacks, and healthy products to your doorstep with a commitment to quality, purity, and wellness
           </p>
         </section>
         
@@ -174,7 +174,7 @@ export default function AboutPage() {
                 Our Promise
               </h3>
               <p className="text-gray-700 text-sm font-light">
-                Fresh, pure, and nutritious dry fruits that support your healthy lifestyle. No shortcuts, no compromises – just nature's best delivered to your doorstep.
+                Fresh, pure, and nutritious dry fruits that support your healthy lifestyle. No shortcuts, no compromises – just natures best delivered to your doorstep.
               </p>
             </div>
           </div>
