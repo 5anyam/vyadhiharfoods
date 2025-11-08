@@ -8,7 +8,7 @@ import MarqueeBanner from "../../components/MarqueeBanner";
 import AboutUsSection from "../../components/AboutUs";
 import HomeFAQ from "../../components/HomeFaq";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Leaf, Award, ShieldCheck, Truck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Leaf, Award, ShieldCheck, Truck, Sparkles, Star } from 'lucide-react';
 import { useRef } from 'react';
 
 export interface Product {
@@ -22,314 +22,223 @@ export interface Product {
   images?: { src: string }[];
   categories?: { id: number; name: string; slug?: string }[];
   attributes?: { option: string }[];
+  average_rating?: string;
+  rating_count?: number;
 }
-
-// Helper functions for product categorization
-const isDryFruit = (p: Product): boolean => {
-  const cats = p.categories || [];
-  const inDryFruitCategory = cats.some((c) =>
-    /dry fruit|almond|cashew|walnut|pistachio|raisin|date/i.test(c.name || c.slug || "")
-  );
-  const nameLooksDryFruit = /almond|cashew|walnut|pistachio|raisin|date/i.test(p.name || "");
-  return inDryFruitCategory || nameLooksDryFruit;
-};
-
-const isMakhana = (p: Product): boolean => {
-  const cats = p.categories || [];
-  const inMakhanaCategory = cats.some((c) =>
-    /makhana|fox nut|lotus seed/i.test(c.name || c.slug || "")
-  );
-  const nameLooksMakhana = /makhana|fox nut|lotus seed/i.test(p.name || "");
-  return inMakhanaCategory || nameLooksMakhana;
-};
-
-const isMixedFruit = (p: Product): boolean => {
-  const cats = p.categories || [];
-  const inMixedCategory = cats.some((c) =>
-    /mixed|dried fruit|berries|apricot|fig|cranberr/i.test(c.name || c.slug || "")
-  );
-  const nameLooksMixed = /mixed|dried fruit|berries|apricot|fig|cranberr/i.test(p.name || "");
-  return inMixedCategory || nameLooksMixed;
-};
 
 // Loading Skeleton Component
 const ProductSkeleton = () => (
-  <div className="bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-    <div className="aspect-square bg-gray-100 animate-pulse" />
+  <div className="bg-white rounded-xl overflow-hidden border-2 border-[#D4A574]/20 shadow-sm">
+    <div className="aspect-square bg-gradient-to-br from-[#F5DEB3]/30 to-[#D4A574]/10 animate-pulse" />
     <div className="p-4 space-y-2">
-      <div className="h-4 bg-gray-200 rounded animate-pulse" />
-      <div className="h-3 bg-gray-100 rounded w-2/3 animate-pulse" />
+      <div className="h-4 bg-[#D4A574]/20 rounded animate-pulse" />
+      <div className="h-3 bg-[#D4A574]/10 rounded w-2/3 animate-pulse" />
     </div>
   </div>
 );
 
 export default function Homepage() {
-  const makhanaSliderRef = useRef<HTMLDivElement>(null);
-  const mixedFruitsSliderRef = useRef<HTMLDivElement>(null);
+  const allProductsSliderRef = useRef<HTMLDivElement>(null);
 
-  // Fixed React Query configuration
+  // React Query configuration
   const { data, isLoading, isError } = useQuery<Product[]>({
     queryKey: ["homepage-products"],
     queryFn: async () => {
-      console.log('Fetching products...');
       const result = await fetchProducts();
-      console.log('Products fetched:', result?.length);
       return (result || []) as Product[];
     },
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   const all = Array.isArray(data) ? data : [];
 
-  // Split collections by category
-  const dryFruits = all.filter((p) => isDryFruit(p));
-  const makhanaProducts = all.filter((p) => isMakhana(p));
-  const mixedFruits = all.filter((p) => isMixedFruit(p));
-
-  const dryFruitsTop6 = dryFruits.slice(0, 6);
-
-  // Scroll functions
-  const scrollMakhanaSlider = (direction: 'left' | 'right') => {
-    if (makhanaSliderRef.current) {
+  // Scroll function for all products
+  const scrollAllProducts = (direction: 'left' | 'right') => {
+    if (allProductsSliderRef.current) {
       const scrollAmount = 300;
-      makhanaSliderRef.current.scrollBy({
+      allProductsSliderRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
       });
     }
   };
-
-  const scrollMixedFruitsSlider = (direction: 'left' | 'right') => {
-    if (mixedFruitsSliderRef.current) {
-      const scrollAmount = 300;
-      mixedFruitsSliderRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  console.log('Query state:', { isLoading, isError, dataLength: all.length });
 
   return (
-    <div className="min-h-screen bg-white pb-16 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#FFF8DC] to-white pb-16 overflow-x-hidden">
       <HeroCarousel />
       <MarqueeBanner />
 
       {/* Trust Badges Section */}
-      <section className="py-12 bg-gradient-to-b from-[#F4F4F0] to-white">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-16 bg-gradient-to-b from-[#FFF8DC] via-[#F5DEB3]/20 to-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4A574]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#8B7355]/5 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white px-6 py-2 rounded-full mb-4 shadow-lg">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-semibold tracking-wide">Why Choose Vyadhihar</span>
+            </div>
+          </div>
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border border-[#6B8E23]/10 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#6B8E23]/10 rounded-full flex items-center justify-center mb-4">
-                <Leaf className="w-7 h-7 text-[#6B8E23]" />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">100% Natural</h3>
-              <p className="text-xs text-gray-600">No preservatives</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border border-[#6B8E23]/10 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#6B8E23]/10 rounded-full flex items-center justify-center mb-4">
-                <Award className="w-7 h-7 text-[#6B8E23]" />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">Premium Quality</h3>
-              <p className="text-xs text-gray-600">Handpicked selection</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border border-[#6B8E23]/10 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#6B8E23]/10 rounded-full flex items-center justify-center mb-4">
-                <ShieldCheck className="w-7 h-7 text-[#6B8E23]" />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">Quality Assured</h3>
-              <p className="text-xs text-gray-600">Lab tested products</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border border-[#6B8E23]/10 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#6B8E23]/10 rounded-full flex items-center justify-center mb-4">
-                <Truck className="w-7 h-7 text-[#6B8E23]" />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">Fast Delivery</h3>
-              <p className="text-xs text-gray-600">Nationwide shipping</p>
-            </div>
+            {[
+              { icon: Leaf, title: "100% Natural", desc: "No preservatives" },
+              { icon: Award, title: "Premium Quality", desc: "Handpicked selection" },
+              { icon: ShieldCheck, title: "Quality Assured", desc: "Lab tested products" },
+              { icon: Truck, title: "Fast Delivery", desc: "Nationwide shipping" }
+            ].map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div key={idx} className="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-lg border-2 border-[#D4A574]/30 hover:shadow-xl hover:scale-105 hover:border-[#D4A574] transition-all duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#D4A574] to-[#C19A6B] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-sm font-bold text-[#5D4E37] mb-1">{item.title}</h3>
+                  <p className="text-xs text-gray-600">{item.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Premium Dry Fruits Section */}
-      <section className="py-16 px-4">
+      {/* All Products Section */}
+      <section className="py-16 px-4 relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#556B2F] mb-3 tracking-wide">
-              Premium Dry Fruits
-            </h2>
-            <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-4 rounded-full"></div>
-            <p className="text-gray-600 text-base max-w-2xl mx-auto font-light">
-              Handpicked almonds, cashews, walnuts, and more. Rich in nutrients and natural goodness.
+            <div className="inline-flex items-center gap-2 mb-4">
+              <Star className="w-5 h-5 text-[#D4A574] fill-[#D4A574]" />
+              <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-[#8B7355] via-[#5D4E37] to-[#8B7355] bg-clip-text text-transparent tracking-wide">
+                Our Products
+              </h2>
+              <Star className="w-5 h-5 text-[#D4A574] fill-[#D4A574]" />
+            </div>
+            <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4A574] via-[#C19A6B] to-[#D4A574] mx-auto mb-4 rounded-full shadow-sm"></div>
+            <p className="text-gray-700 text-base max-w-2xl mx-auto font-light">
+              Premium quality dry fruits, makhana snacks, and healthy products. 100% natural and lab-tested.
             </p>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {[...Array(6)].map((_, i) => (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {[...Array(8)].map((_, i) => (
                 <ProductSkeleton key={i} />
               ))}
             </div>
           ) : isError ? (
             <div className="text-center py-12">
-              <div className="bg-gray-50 rounded-lg p-8 max-w-md mx-auto border border-gray-200">
-                <p className="text-gray-600 mb-4">Unable to load products</p>
+              <div className="bg-gradient-to-br from-[#FFF8DC] to-white rounded-2xl p-8 max-w-md mx-auto border-2 border-[#D4A574]/30 shadow-lg">
+                <p className="text-gray-700 mb-4 font-medium">Unable to load products</p>
                 <button 
                   onClick={() => window.location.reload()}
-                  className="px-6 py-2 bg-[#6B8E23] text-white text-sm hover:bg-[#556B2F] transition-colors rounded-lg"
+                  className="px-6 py-3 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white text-sm font-semibold hover:from-[#C19A6B] hover:to-[#8B7355] transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl"
                 >
                   Refresh Page
                 </button>
               </div>
             </div>
-          ) : dryFruitsTop6.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <p>Products will be available soon.</p>
+          ) : all.length === 0 ? (
+            <div className="text-center py-12 bg-gradient-to-br from-[#FFF8DC] to-white rounded-2xl border-2 border-[#D4A574]/30 p-8">
+              <p className="text-gray-700 font-medium">No products available at the moment.</p>
+              <p className="text-sm text-gray-600 mt-2">Please check back later.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {dryFruitsTop6.map((prod) => (
-                <ProductCard key={prod.id} product={prod} />
-              ))}
-            </div>
-          )}
+            <>
+              {/* Desktop: Horizontal Slider */}
+              <div className="hidden lg:block relative group">
+                <button
+                  onClick={() => scrollAllProducts('left')}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gradient-to-r hover:from-[#D4A574] hover:to-[#C19A6B] hover:text-white text-[#8B7355] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 border-[#D4A574]"
+                  aria-label="Scroll left"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
 
-          {dryFruits.length > 6 && (
-            <div className="mt-10 flex justify-center">
-              <Link
-                href="/dry-fruits"
-                className="inline-flex items-center gap-2 px-8 py-3 text-sm font-medium text-white bg-[#6B8E23] hover:bg-[#556B2F] transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl"
-              >
-                View All Dry Fruits
-              </Link>
-            </div>
+                <div
+                  ref={allProductsSliderRef}
+                  className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
+                >
+                  {all.map((prod) => (
+                    <div key={prod.id} className="flex-shrink-0 w-72">
+                      <ProductCard product={prod} />
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => scrollAllProducts('right')}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gradient-to-r hover:from-[#D4A574] hover:to-[#C19A6B] hover:text-white text-[#8B7355] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 border-[#D4A574]"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Mobile & Tablet: Grid */}
+              <div className="lg:hidden grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+                {all.map((prod) => (
+                  <ProductCard key={prod.id} product={prod} />
+                ))}
+              </div>
+
+              {/* View All Button */}
+              {all.length > 8 && (
+                <div className="mt-12 flex justify-center">
+                  <Link
+                    href="/shop"
+                    className="inline-flex items-center gap-2 px-10 py-4 text-base font-bold text-white bg-gradient-to-r from-[#D4A574] to-[#C19A6B] hover:from-[#C19A6B] hover:to-[#8B7355] transition-all duration-300 rounded-full shadow-xl hover:shadow-2xl hover:scale-105"
+                  >
+                    <span>View All Products</span>
+                    <ChevronRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
 
-      {/* Makhana Snacks Section - Slider */}
-      {!isLoading && makhanaProducts.length > 0 && (
-        <section className="py-16 px-4 bg-gradient-to-b from-[#F4F4F0] to-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-semibold text-[#556B2F] mb-3 tracking-wide">
-                Makhana Snacks
-              </h2>
-              <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-4 rounded-full"></div>
-              <p className="text-gray-600 text-base max-w-2xl mx-auto font-light">
-                Crunchy, healthy, and delicious fox nuts in various flavors. Perfect guilt-free snacking.
-              </p>
-            </div>
-
-            <div className="relative group">
-              <button
-                onClick={() => scrollMakhanaSlider('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#6B8E23] hover:text-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hidden lg:block border-2 border-[#6B8E23]"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              <div
-                ref={makhanaSliderRef}
-                className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
-              >
-                {makhanaProducts.map((prod) => (
-                  <div key={prod.id} className="flex-shrink-0 w-72">
-                    <ProductCard product={prod} />
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => scrollMakhanaSlider('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#6B8E23] hover:text-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hidden lg:block border-2 border-[#6B8E23]"
-                aria-label="Scroll right"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
-      {/* Mixed Fresh Fruits Section - Slider */}
-      {!isLoading && mixedFruits.length > 0 && (
-        <section className="py-16 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-semibold text-[#556B2F] mb-3 tracking-wide">
-                Mixed Fresh Fruits
-              </h2>
-              <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-4 rounded-full"></div>
-              <p className="text-gray-600 text-base max-w-2xl mx-auto font-light">
-                Dried apricots, figs, cranberries and more. Natures candy packed with vitamins.
-              </p>
-            </div>
-
-            <div className="relative group">
-              <button
-                onClick={() => scrollMixedFruitsSlider('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#6B8E23] hover:text-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hidden lg:block border-2 border-[#6B8E23]"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              <div
-                ref={mixedFruitsSliderRef}
-                className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
-              >
-                {mixedFruits.map((prod) => (
-                  <div key={prod.id} className="flex-shrink-0 w-72">
-                    <ProductCard product={prod} />
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => scrollMixedFruitsSlider('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#6B8E23] hover:text-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hidden lg:block border-2 border-[#6B8E23]"
-                aria-label="Scroll right"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Corporate Gifting CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-[#6B8E23] to-[#556B2F]">
-        <div className="max-w-5xl mx-auto text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-4">
+      <section className="py-20 px-4 bg-gradient-to-br from-[#5D4E37] via-[#8B7355] to-[#5D4E37] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4A574]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#C19A6B]/10 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full mb-6 border border-white/30">
+            <Award className="w-4 h-4" />
+            <span className="text-sm font-semibold">Premium Corporate Solutions</span>
+          </div>
+          
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">
             Looking for Corporate Gifting Solutions?
           </h2>
-          <p className="text-lg mb-8 text-white/90">
-            Premium dry fruit gift hampers perfect for your employees and clients. Bulk orders available.
+          <p className="text-xl mb-10 text-white/90 max-w-2xl mx-auto">
+            Premium dry fruit gift hampers perfect for your employees and clients. Bulk orders available with special pricing.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/corporate"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-[#6B8E23] bg-white hover:bg-gray-100 transition-all duration-300 rounded-lg shadow-lg"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 text-base font-bold text-[#5D4E37] bg-white hover:bg-[#FFF8DC] transition-all duration-300 rounded-full shadow-2xl hover:shadow-white/50 hover:scale-105"
             >
-              Explore Corporate Gifting
+              <Award className="w-5 h-5" />
+              <span>Explore Corporate Gifting</span>
             </Link>
             <a
               href="https://wa.me/919876543210?text=Hi,%20I%20want%20to%20enquire%20about%20corporate%20gifting"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-white bg-[#25D366] hover:bg-[#20BA5A] transition-all duration-300 rounded-lg shadow-lg"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 text-base font-bold text-white bg-[#25D366] hover:bg-[#20BA5A] transition-all duration-300 rounded-full shadow-2xl hover:shadow-green-500/50 hover:scale-105"
             >
-              WhatsApp Us
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              <span>WhatsApp Us</span>
             </a>
           </div>
         </div>

@@ -2,12 +2,12 @@
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
 import CartIcon from "./CartIcon";
-
 import React, { useState, useRef, useEffect } from "react";
 import { FiShoppingBag } from "react-icons/fi";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 import { BiChevronDown } from "react-icons/bi";
 import { IoLogoWhatsapp } from "react-icons/io";
+import { Sparkles } from "lucide-react";
 
 const navItems = [
   { name: "Home", to: "/" },
@@ -38,19 +38,20 @@ const navItems = [
     to: "/mixed-fresh-fruits",
   },
   { 
-    name: "Corporate Gifting", 
-    to: "/corporate"
+    name: "About", 
+    to: "/about",
+  },
+  { 
+    name: "Contact", 
+    to: "/contact",
   }
 ];
 
 export default function Header() {
   const location = usePathname();
-  
-  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [mobileActiveSubmenu, setMobileActiveSubmenu] = useState<string | null>(null);
-
   const menuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -82,7 +83,6 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
-  
   const handleSubmenuMouseEnter = (menuName: string) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -97,28 +97,34 @@ export default function Header() {
   };
 
   const handleCorporateEnquiry = () => {
-    const phoneNumber = "919876543210"; // Replace with actual WhatsApp number
+    const phoneNumber = "919876543210";
     const message = "Hi, I'd like to enquire about corporate gifting and bulk orders.";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
     <>
-      {/* Top Bar with Contact Info */}
-      <div className="bg-gradient-to-r from-[#6B8E23] to-[#556B2F] text-white py-2">
+      {/* Top Bar with Golden Gradient */}
+      <div className="bg-gradient-to-r from-[#5D4E37] via-[#8B7355] to-[#5D4E37] text-white py-2.5 border-b border-[#D4A574]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <div className="flex items-center gap-4">
-              <span className="hidden sm:block">🌿 100% Natural & Premium Quality</span>
-              <span className="sm:hidden">🌿 Premium Quality</span>
+              <span className="hidden sm:flex items-center gap-1.5 font-medium">
+                <Sparkles className="w-3.5 h-3.5 text-[#D4A574]" />
+                <span>100% Natural & Premium Quality</span>
+              </span>
+              <span className="sm:hidden flex items-center gap-1.5 font-medium">
+                <Sparkles className="w-3.5 h-3.5 text-[#D4A574]" />
+                Premium Quality
+              </span>
             </div>
             <div className="flex items-center gap-3 sm:gap-4">
-              <a href="tel:+919876543210" className="hover:text-[#F4A460] transition-colors">
+              <a href="tel:+919876543210" className="hover:text-[#D4A574] transition-colors font-medium">
                 📞 +91 98765 43210
               </a>
               <button
                 onClick={handleCorporateEnquiry}
-                className="hidden sm:flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full hover:bg-white/30 transition-colors"
+                className="hidden sm:flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full hover:bg-white/20 transition-all duration-300 font-medium border border-white/20"
               >
                 <IoLogoWhatsapp className="text-base" />
                 <span>Bulk Orders</span>
@@ -128,16 +134,16 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Main Header */}
-      <header className="sticky top-0 z-50 bg-white shadow-md border-b-2 border-[#6B8E23]/20">
+      {/* Main Header with Golden Theme */}
+      <header className="sticky top-0 z-50 bg-white shadow-lg border-b-2 border-[#D4A574]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             
-            {/* Logo Only - Responsive Sizing */}
+            {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <Link href="/" className="group">
                 <img 
-                  className="h-8 sm:h-10 md:h-12 lg:h-14 transition-transform duration-300 group-hover:scale-105" 
+                  className="h-10 sm:h-12 md:h-14 lg:h-16 transition-all duration-300 group-hover:scale-110 drop-shadow-md" 
                   src="/logo.PNG" 
                   alt='Vyadhihar Foods' 
                 />
@@ -145,7 +151,7 @@ export default function Header() {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 flex-1 justify-center" ref={menuRef}>
+            <nav className="hidden lg:flex items-center space-x-8 flex-1 justify-center" ref={menuRef}>
               {navItems.map((item) => (
                 <div key={item.name} className="relative">
                   {item.submenu ? (
@@ -155,41 +161,41 @@ export default function Header() {
                       onMouseLeave={handleSubmenuMouseLeave}
                     >
                       <button
-                        className={`text-base font-medium transition-all duration-200 py-2 flex items-center gap-1 whitespace-nowrap ${
+                        className={`text-base font-semibold transition-all duration-200 py-2 flex items-center gap-1 whitespace-nowrap ${
                           location.startsWith(item.to) 
-                            ? "text-[#6B8E23]" 
-                            : "text-gray-700 hover:text-[#6B8E23]"
+                            ? "text-[#D4A574]" 
+                            : "text-[#5D4E37] hover:text-[#D4A574]"
                         }`}
                       >
                         {item.name}
                         <BiChevronDown className={`transition-transform duration-200 ${activeSubmenu === item.name ? 'rotate-180' : ''}`} />
                       </button>
                       
-                      {/* Dropdown Menu */}
-                      <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white shadow-xl border-2 border-[#6B8E23]/20 rounded-lg min-w-[240px] overflow-hidden transition-all duration-200 ${
-                        activeSubmenu === item.name ? 'opacity-100 visible' : 'opacity-0 invisible'
+                      {/* Dropdown Menu with Golden Theme */}
+                      <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white shadow-2xl border-2 border-[#D4A574]/40 rounded-2xl min-w-[260px] overflow-hidden transition-all duration-300 ${
+                        activeSubmenu === item.name ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                       }`}>
-                        <div className="py-2">
+                        <div className="py-2 bg-gradient-to-b from-[#FFF8DC] to-white">
                           {item.submenu.map((subItem, idx) => (
                             <Link
                               key={subItem.name}
                               href={subItem.to}
-                              className={`block px-5 py-3 text-sm transition-colors duration-200 ${
+                              className={`block px-6 py-3 text-sm transition-all duration-200 ${
                                 location === subItem.to 
-                                  ? 'text-[#6B8E23] bg-[#F4A460]/10' 
-                                  : 'text-gray-700 hover:text-[#6B8E23] hover:bg-[#F4A460]/10'
-                              } ${idx !== 0 ? 'border-t border-gray-100' : ''}`}
+                                  ? 'text-[#D4A574] bg-gradient-to-r from-[#D4A574]/20 to-transparent font-semibold' 
+                                  : 'text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC] font-medium'
+                              } ${idx !== 0 ? 'border-t border-[#D4A574]/10' : ''}`}
                             >
-                              <span className="font-medium">{subItem.name}</span>
+                              <span>{subItem.name}</span>
                             </Link>
                           ))}
                         </div>
-                        <div className="border-t-2 border-[#6B8E23]/20 px-5 py-3 bg-[#F4A460]/5">
+                        <div className="border-t-2 border-[#D4A574]/30 px-6 py-3 bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30">
                           <Link 
                             href={item.to}
-                            className="text-sm text-[#6B8E23] hover:text-[#556B2F] transition-colors font-medium"
+                            className="text-sm text-[#D4A574] hover:text-[#C19A6B] transition-colors font-bold flex items-center gap-1"
                           >
-                            View All →
+                            View All <span className="text-xs">→</span>
                           </Link>
                         </div>
                       </div>
@@ -197,10 +203,10 @@ export default function Header() {
                   ) : (
                     <Link
                       href={item.to}
-                      className={`text-base font-medium transition-colors duration-200 py-2 whitespace-nowrap ${
+                      className={`text-base font-semibold transition-colors duration-200 py-2 whitespace-nowrap ${
                         location === item.to 
-                          ? "text-[#6B8E23]" 
-                          : "text-gray-700 hover:text-[#6B8E23]"
+                          ? "text-[#D4A574]" 
+                          : "text-[#5D4E37] hover:text-[#D4A574]"
                       }`}
                     >
                       {item.name}
@@ -211,16 +217,11 @@ export default function Header() {
             </nav>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 justify-end">
-              
-              
-
-             
-
-              {/* Buy Now Button - Desktop */}
+            <div className="flex items-center gap-3 lg:gap-4 justify-end">
+              {/* Buy Now Button - Golden Gradient */}
               <Link
                 href="/shop"
-                className="hidden lg:flex items-center gap-2 bg-[#6B8E23] text-white px-4 xl:px-5 py-2 xl:py-2.5 rounded-full hover:bg-[#556B2F] transition-all duration-300 font-medium shadow-lg hover:shadow-xl text-sm xl:text-base"
+                className="hidden lg:flex items-center gap-2 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white px-5 py-2.5 rounded-full hover:from-[#C19A6B] hover:to-[#8B7355] transition-all duration-300 font-bold shadow-lg hover:shadow-xl hover:scale-105"
               >
                 <FiShoppingBag className="text-lg" />
                 <span>Buy Now</span>
@@ -234,7 +235,7 @@ export default function Header() {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden text-[#6B8E23] hover:text-[#556B2F] transition-colors p-2"
+                className="lg:hidden text-[#D4A574] hover:text-[#C19A6B] transition-colors p-2"
               >
                 {mobileMenuOpen ? <HiOutlineX className="text-2xl" /> : <HiOutlineMenuAlt3 className="text-2xl" />}
               </button>
@@ -246,32 +247,32 @@ export default function Header() {
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/30 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu with Golden Theme */}
       <div className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transition-transform duration-300 lg:hidden ${
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         
-        {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#6B8E23] to-[#556B2F]">
-          <img className="h-12" src="/logo.PNG" alt='Vyadhihar Foods' />
+        {/* Mobile Menu Header - Golden Gradient */}
+        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#D4A574] via-[#C19A6B] to-[#8B7355]">
+          <img className="h-14 drop-shadow-lg" src="/logo.PNG" alt='Vyadhihar Foods' />
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="text-white hover:text-[#F4A460] p-1 transition-colors"
+            className="text-white hover:text-[#FFF8DC] p-1 transition-colors"
           >
             <HiOutlineX className="text-2xl" />
           </button>
         </div>
 
         {/* Mobile CTA Buttons */}
-        <div className="px-5 py-4 space-y-3 bg-[#F4A460]/5 border-b-2 border-[#6B8E23]/10">
+        <div className="px-5 py-4 space-y-3 bg-gradient-to-b from-[#FFF8DC] to-white border-b-2 border-[#D4A574]/20">
           <Link
             href="/shop"
-            className="flex items-center justify-center gap-2 bg-[#6B8E23] text-white px-4 py-3 rounded-lg hover:bg-[#556B2F] transition-all duration-300 font-medium shadow-md w-full"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white px-4 py-3.5 rounded-xl hover:from-[#C19A6B] hover:to-[#8B7355] transition-all duration-300 font-bold shadow-lg hover:shadow-xl w-full"
             onClick={() => setMobileMenuOpen(false)}
           >
             <FiShoppingBag className="text-lg" />
@@ -283,7 +284,7 @@ export default function Header() {
               handleCorporateEnquiry();
               setMobileMenuOpen(false);
             }}
-            className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-lg hover:bg-[#20BA5A] transition-all duration-300 font-medium shadow-md w-full"
+            className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-3.5 rounded-xl hover:bg-[#20BA5A] transition-all duration-300 font-bold shadow-lg hover:shadow-xl w-full"
           >
             <IoLogoWhatsapp className="text-xl" />
             <span>Corporate Enquiry</span>
@@ -297,10 +298,10 @@ export default function Header() {
               {item.submenu ? (
                 <div>
                   <button
-                    className={`w-full text-left px-4 py-3 text-base font-medium transition-colors flex items-center justify-between rounded-lg ${
+                    className={`w-full text-left px-4 py-3.5 text-base font-bold transition-all duration-200 flex items-center justify-between rounded-xl ${
                       location.startsWith(item.to) 
-                        ? "text-[#6B8E23] bg-[#F4A460]/10" 
-                        : "text-gray-700 hover:text-[#6B8E23] hover:bg-[#F4A460]/5"
+                        ? "text-[#D4A574] bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30" 
+                        : "text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC]"
                     }`}
                     onClick={() => setMobileActiveSubmenu(mobileActiveSubmenu === item.name ? null : item.name)}
                   >
@@ -315,10 +316,10 @@ export default function Header() {
                       <Link
                         key={subItem.name}
                         href={subItem.to}
-                        className={`block px-4 py-2.5 text-sm transition-colors rounded-lg ${
+                        className={`block px-4 py-3 text-sm transition-all duration-200 rounded-lg ${
                           location === subItem.to 
-                            ? 'text-[#6B8E23] bg-[#F4A460]/10 font-medium' 
-                            : 'text-gray-600 hover:text-[#6B8E23] hover:bg-[#F4A460]/5'
+                            ? 'text-[#D4A574] bg-[#FFF8DC] font-bold border-l-4 border-[#D4A574]' 
+                            : 'text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC] font-medium'
                         }`}
                         onClick={() => {
                           setMobileMenuOpen(false);
@@ -333,10 +334,10 @@ export default function Header() {
               ) : (
                 <Link
                   href={item.to}
-                  className={`block px-4 py-3 text-base font-medium transition-colors rounded-lg ${
+                  className={`block px-4 py-3.5 text-base font-bold transition-all duration-200 rounded-xl ${
                     location === item.to 
-                      ? "text-[#6B8E23] bg-[#F4A460]/10" 
-                      : "text-gray-700 hover:text-[#6B8E23] hover:bg-[#F4A460]/5"
+                      ? "text-[#D4A574] bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30" 
+                      : "text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC]"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >

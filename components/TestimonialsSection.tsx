@@ -2,7 +2,7 @@
 
 import Slider from 'react-slick';
 import Image from 'next/image';
-import { Star, Leaf } from 'lucide-react';
+import { Star, Sparkles } from 'lucide-react';
 
 const testimonials = [
   {
@@ -91,8 +91,8 @@ const TestimonialsCarousel = () => {
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`w-4 h-4 ${
-              i < rating ? 'text-[#6B8E23] fill-[#6B8E23]' : 'text-gray-300'
+            className={`w-5 h-5 ${
+              i < rating ? 'text-[#D4A574] fill-[#D4A574]' : 'text-gray-300'
             }`}
           />
         ))}
@@ -101,19 +101,28 @@ const TestimonialsCarousel = () => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-white to-[#F4F4F0] py-20 px-4">
-      <div className="max-w-7xl mx-auto">
+    <section className="bg-gradient-to-b from-white via-[#FFF8DC] to-[#F5DEB3]/30 py-20 px-4 relative overflow-hidden">
+      {/* Decorative Elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4A574]/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#C19A6B]/10 rounded-full blur-3xl"></div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Leaf className="w-6 h-6 text-[#6B8E23]" />
-            <h2 className="text-3xl md:text-4xl font-bold text-[#556B2F] tracking-wide">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white px-6 py-2 rounded-full mb-6 shadow-lg">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-sm font-semibold tracking-wide">Customer Love</span>
+          </div>
+          
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Star className="w-6 h-6 text-[#D4A574] fill-[#D4A574]" />
+            <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-[#8B7355] via-[#5D4E37] to-[#8B7355] bg-clip-text text-transparent tracking-wide">
               Customer Reviews
             </h2>
-            <Leaf className="w-6 h-6 text-[#6B8E23]" />
+            <Star className="w-6 h-6 text-[#D4A574] fill-[#D4A574]" />
           </div>
-          <div className="w-20 h-1 bg-[#F4A460] mx-auto mb-4 rounded-full"></div>
-          <p className="text-gray-700 text-base font-light max-w-2xl mx-auto">
+          <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4A574] via-[#C19A6B] to-[#D4A574] mx-auto mb-4 rounded-full shadow-sm"></div>
+          <p className="text-[#5D4E37] text-base font-light max-w-2xl mx-auto">
             Thousands of satisfied customers trust Vyadhihar Foods for premium quality and natural goodness
           </p>
         </div>
@@ -123,27 +132,27 @@ const TestimonialsCarousel = () => {
           <Slider {...settings}>
             {testimonials.map((testimonial, index) => (
               <div key={index} className="px-4">
-                <div className="bg-white border-2 border-[#6B8E23]/20 p-8 min-h-[420px] flex flex-col hover:shadow-lg hover:border-[#6B8E23] transition-all duration-300 rounded-lg">
+                <div className="bg-white border-2 border-[#D4A574]/30 p-8 min-h-[420px] flex flex-col hover:shadow-2xl hover:border-[#D4A574] hover:scale-105 transition-all duration-300 rounded-2xl">
                   
                   {/* Profile Section */}
                   <div className="flex flex-col items-center mb-6">
-                    <div className="w-16 h-16 rounded-full bg-[#6B8E23]/10 mb-4 overflow-hidden border-3 border-[#6B8E23]/30">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#D4A574]/20 to-[#C19A6B]/20 mb-4 overflow-hidden border-4 border-[#D4A574]/30 shadow-md">
                       <Image
                         src={testimonial.image}
                         alt={testimonial.name}
-                        width={64}
-                        height={64}
+                        width={80}
+                        height={80}
                         className="object-cover w-full h-full"
                       />
                     </div>
                     
-                    <h3 className="text-[#556B2F] font-semibold text-base mb-1">
+                    <h3 className="text-[#5D4E37] font-bold text-lg mb-1">
                       {testimonial.name}
                     </h3>
-                    <p className="text-gray-600 text-xs mb-2 font-light">
-                      {testimonial.location}
+                    <p className="text-gray-600 text-xs mb-3 font-light">
+                      📍 {testimonial.location}
                     </p>
-                    <div className="text-[#6B8E23] text-xs font-medium tracking-wide bg-[#6B8E23]/10 px-3 py-1 rounded-full">
+                    <div className="text-white text-xs font-bold tracking-wide bg-gradient-to-r from-[#D4A574] to-[#C19A6B] px-4 py-1.5 rounded-full shadow-md">
                       {testimonial.product}
                     </div>
                   </div>
@@ -154,7 +163,7 @@ const TestimonialsCarousel = () => {
                   </div>
 
                   {/* Quote */}
-                  <blockquote className="text-gray-700 text-sm leading-relaxed flex-1 font-light text-center italic">
+                  <blockquote className="text-[#5D4E37] text-sm leading-relaxed flex-1 font-light text-center">
                     {testimonial.quote}
                   </blockquote>
                 </div>
@@ -165,24 +174,26 @@ const TestimonialsCarousel = () => {
 
         {/* Bottom Stats */}
         <div className="mt-20 text-center">
-          <div className="inline-flex items-center gap-6 border-2 border-[#6B8E23]/20 bg-white px-8 py-5 rounded-lg hover:border-[#6B8E23] transition-all duration-300">
+          <div className="inline-flex items-center gap-6 border-2 border-[#D4A574]/40 bg-white px-10 py-6 rounded-2xl hover:border-[#D4A574] hover:shadow-2xl transition-all duration-300">
             <div className="flex -space-x-3">
               {testimonials.slice(0, 4).map((testimonial, index) => (
-                <Image
-                  key={index}
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 rounded-full border-3 border-white object-cover hover:scale-110 transition-transform"
-                />
+                <div key={index} className="relative">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 rounded-full border-4 border-white object-cover hover:scale-125 hover:z-10 transition-transform shadow-md"
+                  />
+                </div>
               ))}
             </div>
             <div className="text-left">
-              <p className="text-[#556B2F] font-semibold text-base">
+              <p className="text-[#5D4E37] font-bold text-lg flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#D4A574]" />
                 10,000+ Happy Customers
               </p>
-              <p className="text-gray-600 text-xs font-light">
+              <p className="text-gray-600 text-sm font-light">
                 Trusted for premium quality & natural goodness
               </p>
             </div>
@@ -196,7 +207,7 @@ const TestimonialsCarousel = () => {
           display: flex !important;
           justify-content: center;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
         }
         .testimonials-slider .custom-dots li {
           margin: 0;
@@ -216,12 +227,14 @@ const TestimonialsCarousel = () => {
           display: none;
         }
         .testimonials-slider .custom-dots li.slick-active button {
-          background: #6B8E23;
-          width: 28px;
+          background: linear-gradient(135deg, #D4A574, #C19A6B);
+          width: 32px;
           border-radius: 6px;
+          box-shadow: 0 2px 8px rgba(212, 165, 116, 0.4);
         }
         .testimonials-slider .custom-dots li button:hover {
-          background: #6B8E23;
+          background: #D4A574;
+          transform: scale(1.2);
         }
       `}</style>
     </section>

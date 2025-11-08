@@ -12,7 +12,7 @@ import { Tab } from '@headlessui/react'
 import ProductFAQ from '../../../../components/ProductFaq'
 import RelatedProducts from '../../../../components/RelatedProducts'
 import ProductReviews from '../../../../components/ProductReviews'
-import { Heart, Star, Shield, Truck, Award, CreditCard, Plus, Minus } from 'lucide-react'
+import { Heart, Star, Shield, Truck, Award, CreditCard, Plus, Minus, ShoppingCart, Sparkles, Leaf, CheckCircle } from 'lucide-react'
 
 export interface ImageData { src: string }
 export interface Attribute { option: string }
@@ -70,10 +70,10 @@ export default function ProductClient({
 
   if (isLoading && !product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FFF8DC] to-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-900 border-t-transparent mx-auto mb-3"></div>
-          <p className="text-gray-600 text-sm font-light">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D4A574] border-t-transparent mx-auto mb-4"></div>
+          <p className="text-[#5D4E37] text-base font-medium">Loading product...</p>
         </div>
       </div>
     )
@@ -81,13 +81,13 @@ export default function ProductClient({
 
   if (error || (!products && !product) || !product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center max-w-md p-8">
-          <h2 className="text-xl font-light text-gray-900 mb-3">Product Not Found</h2>
-          <p className="text-sm text-gray-600 font-light mb-6">The product you are looking for does not exist.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FFF8DC] to-white">
+        <div className="text-center max-w-md p-8 bg-white border-2 border-[#D4A574]/30 rounded-2xl shadow-lg">
+          <h2 className="text-2xl font-bold text-[#5D4E37] mb-3">Product Not Found</h2>
+          <p className="text-sm text-gray-600 mb-6">The product you are looking for does not exist.</p>
           <button 
             onClick={() => router.push('/shop')}
-            className="px-8 py-3 text-xs text-white bg-black hover:bg-gray-800 transition-colors tracking-widest uppercase font-light"
+            className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-[#D4A574] to-[#C19A6B] hover:from-[#C19A6B] hover:to-[#8B7355] transition-all rounded-full shadow-lg"
           >
             Back to Shop
           </button>
@@ -99,6 +99,7 @@ export default function ProductClient({
   const salePrice = parseFloat(product.price || '0')
   const regularPrice = parseFloat(product.regular_price || product.price || '0')
   const hasSale = salePrice < regularPrice
+  const discountPercent = hasSale ? Math.round(((regularPrice - salePrice) / regularPrice) * 100) : 0
   const totalPrice = salePrice * quantity
   const totalRegularPrice = regularPrice * quantity
   const totalSaving = hasSale ? totalRegularPrice - totalPrice : 0
@@ -158,16 +159,16 @@ export default function ProductClient({
   }
 
   return (
-    <div className="min-h-screen bg-white pb-20 lg:pb-8">
-      {/* Breadcrumb - Minimal */}
-      <div className="border-b border-gray-200">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#FFF8DC] to-white pb-20 lg:pb-8">
+      {/* Breadcrumb */}
+      <div className="border-b-2 border-[#D4A574]/20 bg-white">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center space-x-2 text-xs text-gray-500 font-light">
-            <button onClick={() => router.push('/shop')} className="hover:text-black transition-colors">
+          <div className="flex items-center space-x-2 text-sm text-[#5D4E37] font-medium">
+            <button onClick={() => router.push('/shop')} className="hover:text-[#D4A574] transition-colors">
               Shop
             </button>
-            <span>›</span>
-            <span className="text-black truncate">{product.name}</span>
+            <span className="text-[#D4A574]">›</span>
+            <span className="text-[#D4A574] truncate">{product.name}</span>
           </div>
         </div>
       </div>
@@ -177,110 +178,143 @@ export default function ProductClient({
         <div className="lg:w-1/2">
           <div className="sticky top-8">
             <ImageGallery images={product.images || []} />
+            
+            {/* Trust Indicators Below Images */}
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              {[
+                { icon: <Leaf className="w-5 h-5" />, text: '100% Natural' },
+                { icon: <Shield className="w-5 h-5" />, text: 'Lab Tested' },
+                { icon: <Award className="w-5 h-5" />, text: 'Premium Quality' },
+              ].map((item, idx) => (
+                <div key={idx} className="flex flex-col items-center text-center p-4 bg-white border-2 border-[#D4A574]/20 rounded-lg">
+                  <div className="text-[#D4A574] mb-2">{item.icon}</div>
+                  <div className="text-xs font-semibold text-[#5D4E37]">{item.text}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Details Section */}
         <div className="lg:w-1/2">
           <div className="space-y-6">
-            {/* Category */}
-            {product.attributes?.length && (
-              <div className="text-xs text-gray-500 uppercase tracking-widest font-light">
-                {product.attributes[0]?.option || 'Collection'}
+            {/* Sale Badge */}
+            {hasSale && (
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white px-4 py-2 rounded-full shadow-lg">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-bold">SAVE {discountPercent}%</span>
               </div>
             )}
 
             {/* Product Name */}
-            <h1 className="text-3xl lg:text-4xl font-light text-gray-900 tracking-wide">
+            <h1 className="text-3xl lg:text-5xl font-bold text-[#5D4E37] tracking-wide leading-tight">
               {product.name}
             </h1>
 
-            {/* Rating */}
-            <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
+            {/* Rating & Wishlist */}
+            <div className="flex items-center gap-4 pb-6 border-b-2 border-[#D4A574]/20">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 text-gray-900 fill-gray-900" />
+                  <Star key={i} className="w-5 h-5 text-[#D4A574] fill-[#D4A574]" />
                 ))}
               </div>
-              <span className="text-xs text-gray-600 font-light">4.8 (247 reviews)</span>
+              <span className="text-sm text-gray-600 font-semibold">4.8 (247 reviews)</span>
               <button
                 onClick={() => setIsWishlisted(!isWishlisted)}
-                className="ml-auto"
+                className="ml-auto p-2 rounded-full border-2 border-[#D4A574]/30 hover:border-[#D4A574] hover:bg-[#FFF8DC] transition-all"
               >
-                <Heart className={`w-5 h-5 transition-colors ${isWishlisted ? 'fill-black text-black' : 'text-gray-400'}`} />
+                <Heart className={`w-6 h-6 transition-colors ${isWishlisted ? 'fill-[#D4A574] text-[#D4A574]' : 'text-gray-400'}`} />
               </button>
             </div>
 
             {/* Short Description */}
             {product.short_description && (
               <div
-                className="prose prose-sm max-w-none text-gray-600 leading-relaxed font-light"
+                className="prose prose-base max-w-none text-[#5D4E37] leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: product.short_description }}
               />
             )}
 
-            {/* Price Section - Minimal */}
-            <div className="py-6 border-y border-gray-200">
-              <div className="flex items-baseline gap-3">
-                <span className="text-2xl font-light text-gray-900">
+            {/* Price Section */}
+            <div className="py-6 border-y-2 border-[#D4A574]/20 bg-gradient-to-br from-[#FFF8DC] to-white rounded-xl p-6">
+              <div className="flex items-baseline gap-3 mb-2">
+                <span className="text-4xl font-bold text-[#5D4E37]">
                   ₹{totalPrice.toLocaleString()}
                 </span>
                 {hasSale && (
                   <>
-                    <span className="line-through text-gray-400 font-light">
+                    <span className="line-through text-gray-400 font-medium text-xl">
                       ₹{totalRegularPrice.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-gray-600 font-light">
-                      Save ₹{totalSaving.toLocaleString()}
                     </span>
                   </>
                 )}
               </div>
+              {hasSale && (
+                <div className="flex items-center gap-2 text-[#D4A574]">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-sm font-bold">
+                    You Save ₹{totalSaving.toLocaleString()} ({discountPercent}% OFF)
+                  </span>
+                </div>
+              )}
               {quantity > 1 && (
-                <div className="text-xs text-gray-500 mt-2 font-light">
-                  ₹{salePrice.toLocaleString()} per bottle
+                <div className="text-sm text-gray-600 mt-3 font-medium">
+                  ₹{salePrice.toLocaleString()} per unit
                 </div>
               )}
             </div>
 
-            {/* Quantity Selector - Minimal */}
+            {/* Quantity Selector */}
             <div>
-              <label className="block text-xs font-light text-gray-600 mb-3 uppercase tracking-widest">
+              <label className="block text-sm font-bold text-[#5D4E37] mb-3 uppercase tracking-wide">
                 Quantity
               </label>
               <div className="flex items-center gap-4">
-                <div className="flex items-center border border-gray-300">
+                <div className="flex items-center border-2 border-[#D4A574] rounded-lg overflow-hidden">
                   <button
                     onClick={() => handleQuantityChange(-1)}
-                    className="p-3 hover:bg-gray-50 transition-colors"
+                    className="p-4 hover:bg-[#FFF8DC] transition-colors"
                     disabled={quantity <= 1}
                   >
-                    <Minus className="w-3.5 h-3.5 text-gray-600" />
+                    <Minus className="w-5 h-5 text-[#5D4E37]" />
                   </button>
-                  <span className="px-6 py-3 font-light text-gray-900 text-sm">
+                  <span className="px-8 py-4 font-bold text-[#5D4E37] text-lg border-x-2 border-[#D4A574]">
                     {quantity}
                   </span>
                   <button
                     onClick={() => handleQuantityChange(1)}
-                    className="p-3 hover:bg-gray-50 transition-colors"
+                    className="p-4 hover:bg-[#FFF8DC] transition-colors"
                   >
-                    <Plus className="w-3.5 h-3.5 text-gray-600" />
+                    <Plus className="w-5 h-5 text-[#5D4E37]" />
                   </button>
                 </div>
+                <span className="text-sm text-gray-600 font-medium">
+                  {quantity > 1 ? `${quantity} items` : '1 item'} in cart
+                </span>
               </div>
             </div>
 
-            {/* Action Buttons - Minimal */}
-            <div className="hidden lg:flex flex-col gap-3 pt-6">
+            {/* Action Buttons */}
+            <div className="hidden lg:flex flex-col gap-4 pt-6">
               <button
-                className={`w-full bg-black text-white font-light px-8 py-4 text-xs tracking-widest uppercase hover:bg-gray-800 transition-colors ${isAddingToCart ? 'opacity-50' : ''}`}
+                className={`w-full bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white font-bold px-8 py-4 text-base rounded-xl hover:from-[#C19A6B] hover:to-[#8B7355] transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2 ${isAddingToCart ? 'opacity-50' : ''}`}
                 onClick={handleAddToCart}
                 disabled={isAddingToCart}
               >
-                {isAddingToCart ? 'Added' : 'Add to Cart'}
+                {isAddingToCart ? (
+                  <>
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Added to Cart</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="w-5 h-5" />
+                    <span>Add to Cart</span>
+                  </>
+                )}
               </button>
               <button
-                className={`w-full border border-gray-300 text-black font-light px-8 py-4 text-xs tracking-widest uppercase hover:bg-gray-50 transition-colors ${isBuyingNow ? 'opacity-50' : ''}`}
+                className={`w-full border-2 border-[#D4A574] text-[#5D4E37] font-bold px-8 py-4 text-base rounded-xl hover:bg-[#FFF8DC] transition-all shadow-md hover:shadow-lg ${isBuyingNow ? 'opacity-50' : ''}`}
                 onClick={handleBuyNow}
                 disabled={isBuyingNow}
               >
@@ -288,20 +322,20 @@ export default function ProductClient({
               </button>
             </div>
 
-            {/* Trust Badges - Minimal */}
-            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-200">
+            {/* Trust Badges */}
+            <div className="grid grid-cols-2 gap-4 pt-6 border-t-2 border-[#D4A574]/20">
               {[
-                { icon: <Truck className="w-4 h-4" />, label: 'Free Shipping', subtitle: 'Orders above ₹999' },
-                { icon: <Shield className="w-4 h-4" />, label: 'Authentic', subtitle: 'Guaranteed original' },
-                { icon: <Award className="w-4 h-4" />, label: 'Premium Quality', subtitle: 'Long-lasting EDP' },
-                { icon: <CreditCard className="w-4 h-4" />, label: 'Secure Payment', subtitle: 'Protected checkout' },
+                { icon: <Truck className="w-5 h-5" />, label: 'Free Shipping', subtitle: 'Orders above ₹999' },
+                { icon: <Shield className="w-5 h-5" />, label: 'Quality Assured', subtitle: 'Lab tested' },
+                { icon: <Award className="w-5 h-5" />, label: 'Premium Quality', subtitle: '100% natural' },
+                { icon: <CreditCard className="w-5 h-5" />, label: 'Secure Payment', subtitle: 'Protected checkout' },
               ].map((item, idx) => (
-                <div key={idx} className="text-center p-4 border border-gray-100">
-                  <div className="text-gray-600 mb-2 flex justify-center">
+                <div key={idx} className="text-center p-4 border-2 border-[#D4A574]/20 rounded-lg hover:border-[#D4A574] hover:bg-[#FFF8DC] transition-all">
+                  <div className="text-[#D4A574] mb-2 flex justify-center">
                     {item.icon}
                   </div>
-                  <div className="font-light text-xs text-gray-900 mb-1">{item.label}</div>
-                  <div className="text-xs text-gray-500 font-light">{item.subtitle}</div>
+                  <div className="font-bold text-xs text-[#5D4E37] mb-1">{item.label}</div>
+                  <div className="text-xs text-gray-600">{item.subtitle}</div>
                 </div>
               ))}
             </div>
@@ -309,50 +343,60 @@ export default function ProductClient({
         </div>
       </div>
 
-      {/* Mobile Fixed Bottom - Minimal */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 p-4">
+      {/* Mobile Fixed Bottom */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#D4A574]/30 z-50 p-4 shadow-2xl">
         <div className="max-w-md mx-auto">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-3">
             <div className="flex-1">
-              <div className="text-xs text-gray-500 mb-1 font-light">Total</div>
+              <div className="text-xs text-gray-600 mb-1 font-medium">Total Price</div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-light text-gray-900">
+                <span className="text-2xl font-bold text-[#5D4E37]">
                   ₹{totalPrice.toLocaleString()}
                 </span>
                 {hasSale && (
-                  <span className="line-through text-gray-400 text-sm font-light">
+                  <span className="line-through text-gray-400 text-sm">
                     ₹{totalRegularPrice.toLocaleString()}
                   </span>
                 )}
               </div>
             </div>
-            <div className="flex items-center border border-gray-300">
+            <div className="flex items-center border-2 border-[#D4A574] rounded-lg">
               <button
                 onClick={() => handleQuantityChange(-1)}
-                className="p-2 hover:bg-gray-50"
+                className="p-2 hover:bg-[#FFF8DC]"
                 disabled={quantity <= 1}
               >
-                <Minus className="w-3 h-3" />
+                <Minus className="w-4 h-4" />
               </button>
-              <span className="px-4 py-2 text-sm font-light">{quantity}</span>
+              <span className="px-4 py-2 text-base font-bold">{quantity}</span>
               <button
                 onClick={() => handleQuantityChange(1)}
-                className="p-2 hover:bg-gray-50"
+                className="p-2 hover:bg-[#FFF8DC]"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-4 h-4" />
               </button>
             </div>
           </div>
           <div className="flex gap-3">
             <button
-              className="flex-1 bg-black text-white font-light px-4 py-3 text-xs tracking-widest uppercase hover:bg-gray-800"
+              className="flex-1 bg-gradient-to-r from-[#D4A574] to-[#C19A6B] text-white font-bold px-4 py-3.5 text-sm rounded-xl hover:from-[#C19A6B] hover:to-[#8B7355] transition-all shadow-lg flex items-center justify-center gap-2"
               onClick={handleAddToCart}
               disabled={isAddingToCart}
             >
-              {isAddingToCart ? 'Added' : 'Add to Cart'}
+              {isAddingToCart ? (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Added</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Add to Cart</span>
+                </>
+              )}
             </button>
             <button
-              className="flex-1 border border-gray-300 text-black font-light px-4 py-3 text-xs tracking-widest uppercase hover:bg-gray-50"
+              className="flex-1 border-2 border-[#D4A574] text-[#5D4E37] font-bold px-4 py-3.5 text-sm rounded-xl hover:bg-[#FFF8DC] transition-all"
               onClick={handleBuyNow}
               disabled={isBuyingNow}
             >
@@ -362,54 +406,70 @@ export default function ProductClient({
         </div>
       </div>
 
-      {/* Tabs - Minimal */}
+      {/* Tabs Section */}
       <div className="max-w-7xl mx-auto mt-16 px-4">
-        <div className="border-t border-gray-200">
+        <div className="border-t-2 border-[#D4A574]/30">
           <Tab.Group>
-            <Tab.List className="flex border-b border-gray-200">
-              {['Description', 'Fragrance Notes', 'How to Use'].map((label, idx) => (
+            <Tab.List className="flex border-b-2 border-[#D4A574]/30 bg-white">
+              {['Description', 'Benefits', 'How to Use'].map((label, idx) => (
                 <Tab key={idx} className={({ selected }) =>
-                  `flex-1 py-4 px-6 text-xs font-light outline-none transition-all uppercase tracking-widest ${
+                  `flex-1 py-4 px-6 text-sm font-bold outline-none transition-all uppercase tracking-wide ${
                     selected 
-                      ? 'text-black border-b-2 border-black' 
-                      : 'text-gray-500 hover:text-black'
+                      ? 'text-[#D4A574] border-b-4 border-[#D4A574] bg-[#FFF8DC]' 
+                      : 'text-gray-600 hover:text-[#D4A574] hover:bg-[#FFF8DC]'
                   }`
                 }>
                   {label}
                 </Tab>
               ))}
             </Tab.List>
-            <Tab.Panels className="py-8">
+            <Tab.Panels className="py-8 bg-white rounded-b-2xl">
               <Tab.Panel>
-                <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed font-light" 
+                <div className="prose prose-base max-w-none text-[#5D4E37] leading-relaxed p-6" 
                      dangerouslySetInnerHTML={{ __html: product.description || '' }} />
               </Tab.Panel>
               <Tab.Panel>
-                <div className="space-y-6">
-                  <h3 className="text-lg font-light text-gray-900 tracking-wide">Fragrance Profile</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-6 p-6">
+                  <h3 className="text-2xl font-bold text-[#5D4E37] tracking-wide">Health Benefits</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
-                      { title: 'Top Notes', notes: 'Bergamot, Pink Pepper, Fresh Mint' },
-                      { title: 'Heart Notes', notes: 'Jasmine, Rose, Spicy Cardamom' },
-                      { title: 'Base Notes', notes: 'Sandalwood, Musk, Vanilla' },
+                      { title: 'Rich in Nutrients', desc: 'Packed with essential vitamins and minerals for daily health' },
+                      { title: 'Energy Boost', desc: 'Natural source of energy for active lifestyle' },
+                      { title: 'Heart Healthy', desc: 'Supports cardiovascular health with good fats' },
+                      { title: 'Immunity Support', desc: 'Strengthens immune system naturally' },
                     ].map((item, idx) => (
-                      <div key={idx} className="border border-gray-200 p-6">
-                        <h4 className="font-light text-sm text-gray-900 mb-3 uppercase tracking-wide">{item.title}</h4>
-                        <p className="text-sm text-gray-600 font-light">{item.notes}</p>
+                      <div key={idx} className="border-2 border-[#D4A574]/30 p-6 rounded-xl hover:border-[#D4A574] hover:bg-[#FFF8DC] transition-all">
+                        <h4 className="font-bold text-base text-[#5D4E37] mb-3 flex items-center gap-2">
+                          <CheckCircle className="w-5 h-5 text-[#D4A574]" />
+                          {item.title}
+                        </h4>
+                        <p className="text-sm text-gray-700">{item.desc}</p>
                       </div>
                     ))}
                   </div>
                 </div>
               </Tab.Panel>
               <Tab.Panel>
-                <div className="space-y-6">
-                  <h3 className="text-lg font-light text-gray-900 tracking-wide">Application Tips</h3>
-                  <div className="border border-gray-200 p-6">
-                    <ul className="space-y-3 text-gray-700 font-light text-sm">
-                      <li>Apply to pulse points: wrists, neck, and behind ears</li>
-                      <li>For best longevity, apply to well-moisturized skin</li>
-                      <li>Allow the fragrance to dry naturally - do not rub</li>
-                      <li>For evening occasions, lightly spray on clothing or hair</li>
+                <div className="space-y-6 p-6">
+                  <h3 className="text-2xl font-bold text-[#5D4E37] tracking-wide">Storage & Usage</h3>
+                  <div className="border-2 border-[#D4A574]/30 p-6 rounded-xl bg-gradient-to-br from-[#FFF8DC] to-white">
+                    <ul className="space-y-4 text-[#5D4E37] text-base">
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#D4A574] flex-shrink-0 mt-0.5" />
+                        <span>Store in a cool, dry place away from direct sunlight</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#D4A574] flex-shrink-0 mt-0.5" />
+                        <span>Keep in airtight container after opening</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#D4A574] flex-shrink-0 mt-0.5" />
+                        <span>Best consumed within 6-12 months for optimal freshness</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#D4A574] flex-shrink-0 mt-0.5" />
+                        <span>Can be eaten as a snack or added to recipes</span>
+                      </li>
                     </ul>
                   </div>
                 </div>
