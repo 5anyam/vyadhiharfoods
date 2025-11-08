@@ -97,7 +97,7 @@ export default function Header() {
   };
 
   const handleCorporateEnquiry = () => {
-    const phoneNumber = "919876543210";
+    const phoneNumber = "917428408825";
     const message = "Hi, I'd like to enquire about corporate gifting and bulk orders.";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
@@ -119,8 +119,8 @@ export default function Header() {
               </span>
             </div>
             <div className="flex items-center gap-3 sm:gap-4">
-              <a href="tel:+919876543210" className="hover:text-[#D4A574] transition-colors font-medium">
-                📞 +91 98765 43210
+              <a href="tel:+917428408825" className="hover:text-[#D4A574] transition-colors font-medium">
+                📞 +91 74284 08825
               </a>
               <button
                 onClick={handleCorporateEnquiry}
