@@ -10,7 +10,7 @@ export interface WordPressUser {
   }
   
   export class WordPressAuth {
-    private static readonly WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://cms.amraj.in';
+    private static readonly WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://cms.vyadhiharfoods.com';
     private static readonly TOKEN_KEY = 'wp_token';
     private static readonly USER_KEY = 'wp_user';
   
