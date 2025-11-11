@@ -77,6 +77,27 @@ export default function ImageGallery({ images }: { images: Image[] }) {
     setIsLoading(true);
   }, [active, displayImages]);
 
+  // Lock body scroll when fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, [isFullscreen]);
+
   // --- Navigation/Drag Logic ---
 
   const handlePrevious = () => {
@@ -95,7 +116,7 @@ export default function ImageGallery({ images }: { images: Image[] }) {
     setIsZoomed(false);
   };
 
-  // -- Touch/Drag handlers (main area & fullscreen mobile)
+  // -- Touch/Drag handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     if (isZoomed) return;
     const touch = e.touches[0];
@@ -188,7 +209,7 @@ export default function ImageGallery({ images }: { images: Image[] }) {
   // --- Fullscreen logic ---
   const enterFullscreen = () => {
     setIsFullscreen(true);
-    setIsZoomed(false); // Don't zoom on entry
+    setIsZoomed(false);
     if (fullscreenRef.current) {
       const element = fullscreenRef.current as ExtendedHTMLElement;
       if (element.requestFullscreen) element.requestFullscreen().catch(()=>{});
@@ -207,7 +228,6 @@ export default function ImageGallery({ images }: { images: Image[] }) {
   };
 
   useEffect(() => {
-    // Clean up on native fullscreen exit (escape, android nav, etc)
     const handleFullscreenChange = () => {
       const doc = document as ExtendedDocument;
       if (!document.fullscreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
@@ -356,13 +376,10 @@ export default function ImageGallery({ images }: { images: Image[] }) {
               {Math.abs(dragOffset) > DRAG_THRESHOLD ? "Release to slide" : "Drag to slide"}
             </div>
           )}
-
-          {/* Improved Image Counter (bottom, spacing) */}
-    
         </div>
       </div>
 
-      {/* Thumbnails (desktop+mobile) */}
+      {/* Thumbnails */}
       {displayImages.length > 1 && (
         <div className="mt-8">
           <div className="flex overflow-x-auto gap-4 px-2 py-2 scrollbar-hide">
@@ -416,18 +433,22 @@ export default function ImageGallery({ images }: { images: Image[] }) {
       {isFullscreen && (
         <div
           ref={fullscreenRef}
-          className="fixed inset-0 bg-white z-[9999] flex flex-col items-center justify-center p-4"
-          style={{ width: "100vw", height: "100vh" }}
+          className="fixed inset-0 bg-white z-[99999] flex flex-col items-center justify-center p-4"
+          style={{ 
+            width: "100vw", 
+            height: "100vh",
+            position: "fixed",
+            top: 0,
+            left: 0
+          }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-         
-
           {/* Close Button */}
           <button
             onClick={exitFullscreen}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 p-2 z-40 rounded-full bg-black/70 hover:bg-black/80 transition-all duration-200 border border-white/20 focus:outline-none"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 p-3 z-[100000] rounded-full bg-black/70 hover:bg-black/80 transition-all duration-200 border border-white/20 focus:outline-none"
             aria-label="Close fullscreen"
           >
             <X className="w-7 h-7" />
@@ -458,7 +479,6 @@ export default function ImageGallery({ images }: { images: Image[] }) {
                 <div className="text-center text-white/90 mb-5 text-lg font-semibold tracking-wide">
                   {active + 1} / {displayImages.length}
                 </div>
-                {/* Range Slider */}
                 
                 {/* Thumbnails Row */}
                 <div className="flex justify-center gap-3 mt-2 overflow-x-auto pb-1">

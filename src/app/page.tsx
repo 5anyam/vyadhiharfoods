@@ -8,7 +8,7 @@ import MarqueeBanner from "../../components/MarqueeBanner";
 import AboutUsSection from "../../components/AboutUs";
 import HomeFAQ from "../../components/HomeFaq";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Leaf, Award, ShieldCheck, Truck, Sparkles, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Leaf, Award, ShieldCheck, Truck, Sparkles, Star, Heart, Target } from 'lucide-react';
 import { useRef } from 'react';
 
 export interface Product {
@@ -204,6 +204,73 @@ export default function Homepage() {
         </div>
       </section>
 
+      {/* Founder Story Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-[#5D4E37] via-[#8B7355] to-[#5D4E37] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4A574]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#C19A6B]/10 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Founder Image */}
+            <div className="order-2 lg:order-1">
+              <div className="relative">
+                <div className="aspect-square rounded-3xl overflow-hidden border-4 border-white/30 shadow-2xl backdrop-blur-sm">
+                  <img 
+                    src="/founder.jpg" 
+                    alt="Keshav Sharma - Founder of Vyadhihar Foods" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -right-6 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-2xl p-6 shadow-2xl">
+                  <p className="text-white font-bold text-xl">Keshav Sharma</p>
+                  <p className="text-white/90 text-sm">Founder & CEO</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Story Excerpt */}
+            <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full mb-6 border border-white/30">
+                <Heart className="w-4 h-4" />
+                <span className="text-sm font-semibold">Our Story</span>
+              </div>
+              
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                Built on Persistence, Powered by Vision
+              </h2>
+              
+              <div className="space-y-4 text-white/90 text-base lg:text-lg leading-relaxed mb-8">
+                <p className="text-lg italic border-l-4 border-white/50 pl-4">
+                  I come from a business family, but I wanted to build something of my own—something 
+                  that would help people live healthier lives.
+                </p>
+                <p>
+                  From pitching door-to-door in Cyber City to losing a crore-worth deal with Dell, 
+                  from fruit boxes to superfood mixtures—every setback taught me something valuable.
+                </p>
+                <p className="font-semibold text-white flex items-start gap-2">
+                  <Target className="w-5 h-5 flex-shrink-0 mt-1" />
+                  <span>This is not just a success story it is a real story of persistence, vision, and 
+                  building brick by brick.</span>
+                </p>
+              </div>
+
+              <Link
+                href="/founder-story"
+                className="inline-flex items-center gap-2 px-8 py-4 text-base font-bold text-[#5D4E37] bg-white hover:bg-[#FFF8DC] transition-all duration-300 rounded-full shadow-2xl hover:shadow-white/50 hover:scale-105"
+              >
+                <span>Read Full Story</span>
+                <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <AboutUsSection />
+      <Testimonials />
+      <HomeFAQ />
+
       {/* Corporate Gifting CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-[#5D4E37] via-[#8B7355] to-[#5D4E37] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4A574]/10 rounded-full blur-3xl"></div>
@@ -243,10 +310,6 @@ export default function Homepage() {
           </div>
         </div>
       </section>
-
-      <AboutUsSection />
-      <Testimonials />
-      <HomeFAQ />
 
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar {
