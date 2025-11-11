@@ -144,7 +144,7 @@ export default function Header() {
               <Link href="/" className="group">
                 <img 
                   className="h-10 sm:h-12 md:h-14 lg:h-16 transition-all duration-300 group-hover:scale-110 drop-shadow-md" 
-                  src="/logo.png" 
+                  src="logo.png" 
                   alt='Vyadhihar Foods' 
                 />
               </Link>
@@ -259,7 +259,7 @@ export default function Header() {
         
         {/* Mobile Menu Header - Golden Gradient */}
         <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#D4A574] via-[#C19A6B] to-[#8B7355]">
-          <img className="h-14 drop-shadow-lg" src="/logo.png" alt='Vyadhihar Foods' />
+          <img className="h-14 drop-shadow-lg" src="logo.png" alt='Vyadhihar Foods' />
           <button
             onClick={() => setMobileMenuOpen(false)}
             className="text-white hover:text-[#FFF8DC] p-1 transition-colors"

@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="mb-6">
-              <img className="h-24 drop-shadow-lg" src="/logo.png" alt="Vyadhihar Foods" />
+              <img className="h-24 drop-shadow-lg" src="logo.png" alt="Vyadhihar Foods" />
             </div>
             <p className="text-sm leading-relaxed text-[#5D4E37] font-light mb-6">
               Premium quality dry fruits, makhana snacks, and mixed fresh fruits delivered with care. 100% natural and healthy.
