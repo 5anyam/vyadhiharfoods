@@ -3,22 +3,16 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const IMAGES = [
   {
-    src: '/banner1.jpg',
+    src: 'http://cms.vyadhiharfoods.com/wp-content/uploads/2025/11/Vyadhihar-banner-1-scaled.jpg',
     alt: 'Premium Dry Fruits Collection',
     title: 'Premium Dry Fruits',
     subtitle: '100% Natural & Healthy',
   },
   {
-    src: '/banner2.jpg',
+    src: 'http://cms.vyadhiharfoods.com/wp-content/uploads/2025/11/Vyadhihar-banner-scaled.jpg',
     alt: 'Makhana Snacks',
     title: 'Crunchy Makhana Snacks',
     subtitle: 'Guilt-Free Snacking',
-  },
-  {
-    src: '/banner3.jpg',
-    alt: 'Corporate Gifting',
-    title: 'Corporate Gifting Solutions',
-    subtitle: 'Premium Gift Hampers',
   }
 ];
 
