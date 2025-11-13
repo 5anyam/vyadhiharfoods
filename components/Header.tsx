@@ -2,68 +2,24 @@
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
 import CartIcon from "./CartIcon";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FiShoppingBag } from "react-icons/fi";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
-import { BiChevronDown } from "react-icons/bi";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { Sparkles } from "lucide-react";
 
 const navItems = [
   { name: "Home", to: "/" },
-  { 
-    name: "Dry Fruits", 
-    to: "/dry-fruits",
-    submenu: [
-      { name: "Premium Almonds", to: "/product/premium-almonds" },
-      { name: "Cashew Nuts", to: "/product/cashew-nuts" },
-      { name: "Walnuts", to: "/product/walnuts" },
-      { name: "Pistachios", to: "/product/pistachios" },
-      { name: "Raisins", to: "/product/raisins" },
-      { name: "Dates", to: "/product/dates" }
-    ]
-  },
-  { 
-    name: "Makhana Snacks", 
-    to: "/makhana-snacks",
-    submenu: [
-      { name: "Roasted Makhana", to: "/product/roasted-makhana" },
-      { name: "Flavored Makhana", to: "/product/flavored-makhana" },
-      { name: "Masala Makhana", to: "/product/masala-makhana" },
-      { name: "Chocolate Makhana", to: "/product/chocolate-makhana" }
-    ]
-  },
-  { 
-    name: "Mixed Fresh Fruits", 
-    to: "/mixed-fresh-fruits",
-  },
-  { 
-    name: "About", 
-    to: "/about",
-  },
-  { 
-    name: "Contact", 
-    to: "/contact",
-  }
+  { name: "Superfood Fusion", to: "/product/superfood-fusion" },
+  { name: "Roasted Makhana", to: "/product/foxnut-makhana" },
+  { name: "Fresh Fruit Boxes", to: "/product/fruit-box" },
+  { name: "Our Story", to: "/founder-story" },
+  { name: "Contact", to: "/contact" }
 ];
 
 export default function Header() {
   const location = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
-  const [mobileActiveSubmenu, setMobileActiveSubmenu] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveSubmenu(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -83,22 +39,9 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const handleSubmenuMouseEnter = (menuName: string) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    setActiveSubmenu(menuName);
-  };
-
-  const handleSubmenuMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setActiveSubmenu(null);
-    }, 200);
-  };
-
-  const handleCorporateEnquiry = () => {
+  const handleFruitBoxEnquiry = () => {
     const phoneNumber = "917428408825";
-    const message = "Hi, I'd like to enquire about corporate gifting and bulk orders.";
+    const message = "Hi, I'd like to enquire about fresh fruit boxes for daily delivery.";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -123,11 +66,11 @@ export default function Header() {
                 📞 +91 74284 08825
               </a>
               <button
-                onClick={handleCorporateEnquiry}
+                onClick={handleFruitBoxEnquiry}
                 className="hidden sm:flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full hover:bg-white/20 transition-all duration-300 font-medium border border-white/20"
               >
                 <IoLogoWhatsapp className="text-base" />
-                <span>Bulk Orders</span>
+                <span>Fresh Fruit Boxes</span>
               </button>
             </div>
           </div>
@@ -135,7 +78,7 @@ export default function Header() {
       </div>
 
       {/* Main Header with Golden Theme */}
-      <header className="sticky top-0 z-1 bg-white shadow-lg border-b-2 border-[#D4A574]/30">
+      <header className="sticky top-0 z-50 bg-white shadow-lg border-b-2 border-[#D4A574]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             
@@ -151,68 +94,19 @@ export default function Header() {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8 flex-1 justify-center" ref={menuRef}>
+            <nav className="hidden lg:flex items-center space-x-8 flex-1 justify-center">
               {navItems.map((item) => (
-                <div key={item.name} className="relative">
-                  {item.submenu ? (
-                    <div
-                      className="relative"
-                      onMouseEnter={() => handleSubmenuMouseEnter(item.name)}
-                      onMouseLeave={handleSubmenuMouseLeave}
-                    >
-                      <button
-                        className={`text-base font-semibold transition-all duration-200 py-2 flex items-center gap-1 whitespace-nowrap ${
-                          location.startsWith(item.to) 
-                            ? "text-[#D4A574]" 
-                            : "text-[#5D4E37] hover:text-[#D4A574]"
-                        }`}
-                      >
-                        {item.name}
-                        <BiChevronDown className={`transition-transform duration-200 ${activeSubmenu === item.name ? 'rotate-180' : ''}`} />
-                      </button>
-                      
-                      {/* Dropdown Menu with Golden Theme */}
-                      <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-white shadow-2xl border-2 border-[#D4A574]/40 rounded-2xl min-w-[260px] overflow-hidden transition-all duration-300 ${
-                        activeSubmenu === item.name ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
-                      }`}>
-                        <div className="py-2 bg-gradient-to-b from-[#FFF8DC] to-white">
-                          {item.submenu.map((subItem, idx) => (
-                            <Link
-                              key={subItem.name}
-                              href={subItem.to}
-                              className={`block px-6 py-3 text-sm transition-all duration-200 ${
-                                location === subItem.to 
-                                  ? 'text-[#D4A574] bg-gradient-to-r from-[#D4A574]/20 to-transparent font-semibold' 
-                                  : 'text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC] font-medium'
-                              } ${idx !== 0 ? 'border-t border-[#D4A574]/10' : ''}`}
-                            >
-                              <span>{subItem.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                        <div className="border-t-2 border-[#D4A574]/30 px-6 py-3 bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30">
-                          <Link 
-                            href={item.to}
-                            className="text-sm text-[#D4A574] hover:text-[#C19A6B] transition-colors font-bold flex items-center gap-1"
-                          >
-                            View All <span className="text-xs">→</span>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <Link
-                      href={item.to}
-                      className={`text-base font-semibold transition-colors duration-200 py-2 whitespace-nowrap ${
-                        location === item.to 
-                          ? "text-[#D4A574]" 
-                          : "text-[#5D4E37] hover:text-[#D4A574]"
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
-                  )}
-                </div>
+                <Link
+                  key={item.name}
+                  href={item.to}
+                  className={`text-base font-semibold transition-colors duration-200 py-2 whitespace-nowrap ${
+                    location === item.to 
+                      ? "text-[#D4A574]" 
+                      : "text-[#5D4E37] hover:text-[#D4A574]"
+                  }`}
+                >
+                  {item.name}
+                </Link>
               ))}
             </nav>
 
@@ -281,73 +175,35 @@ export default function Header() {
           
           <button
             onClick={() => {
-              handleCorporateEnquiry();
+              handleFruitBoxEnquiry();
               setMobileMenuOpen(false);
             }}
             className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-3.5 rounded-xl hover:bg-[#20BA5A] transition-all duration-300 font-bold shadow-lg hover:shadow-xl w-full"
           >
             <IoLogoWhatsapp className="text-xl" />
-            <span>Corporate Enquiry</span>
+            <span>Fresh Fruit Box Enquiry</span>
           </button>
         </div>
 
         {/* Mobile Navigation */}
         <nav className="flex flex-col p-5 space-y-1 h-full overflow-y-auto pb-24">
           {navItems.map((item) => (
-            <div key={item.name}>
-              {item.submenu ? (
-                <div>
-                  <button
-                    className={`w-full text-left px-4 py-3.5 text-base font-bold transition-all duration-200 flex items-center justify-between rounded-xl ${
-                      location.startsWith(item.to) 
-                        ? "text-[#D4A574] bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30" 
-                        : "text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC]"
-                    }`}
-                    onClick={() => setMobileActiveSubmenu(mobileActiveSubmenu === item.name ? null : item.name)}
-                  >
-                    {item.name}
-                    <BiChevronDown className={`transition-transform duration-200 ${mobileActiveSubmenu === item.name ? 'rotate-180' : ''}`} />
-                  </button>
-                  
-                  <div className={`ml-4 transition-all duration-300 overflow-hidden ${
-                    mobileActiveSubmenu === item.name ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
-                  }`}>
-                    {item.submenu.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        href={subItem.to}
-                        className={`block px-4 py-3 text-sm transition-all duration-200 rounded-lg ${
-                          location === subItem.to 
-                            ? 'text-[#D4A574] bg-[#FFF8DC] font-bold border-l-4 border-[#D4A574]' 
-                            : 'text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC] font-medium'
-                        }`}
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setMobileActiveSubmenu(null);
-                        }}
-                      >
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  href={item.to}
-                  className={`block px-4 py-3.5 text-base font-bold transition-all duration-200 rounded-xl ${
-                    location === item.to 
-                      ? "text-[#D4A574] bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30" 
-                      : "text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC]"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              )}
-            </div>
+            <Link
+              key={item.name}
+              href={item.to}
+              className={`block px-4 py-3.5 text-base font-bold transition-all duration-200 rounded-xl ${
+                location === item.to 
+                  ? "text-[#D4A574] bg-gradient-to-r from-[#FFF8DC] to-[#F5DEB3]/30" 
+                  : "text-[#5D4E37] hover:text-[#D4A574] hover:bg-[#FFF8DC]"
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {item.name}
+            </Link>
           ))}
         </nav>
       </div>
     </>
   );
 }
+

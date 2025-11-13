@@ -14,7 +14,7 @@ export default function Footer() {
               <img className="h-24 drop-shadow-lg" src="/vyadhihar-logo.png" alt="Vyadhihar Foods" />
             </div>
             <p className="text-sm leading-relaxed text-[#5D4E37] font-light mb-6">
-              Premium quality dry fruits, makhana snacks, and mixed fresh fruits delivered with care. 100% natural and healthy.
+              Premium quality superfood mixtures, roasted makhana snacks, and fresh fruit boxes delivered daily. 100% natural and healthy.
             </p>
             
             {/* Social Media Icons - Golden Theme */}
@@ -61,7 +61,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <h4 className="text-sm font-bold text-[#5D4E37] mb-6 uppercase tracking-wider flex items-center gap-2">
               <span className="w-1 h-4 bg-gradient-to-b from-[#D4A574] to-[#C19A6B] rounded-full"></span>
-              Quick Links
+              Our Products
             </h4>
             <ul className="space-y-3">
               <li>
@@ -70,28 +70,33 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/dry-fruits" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
-                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Dry Fruits
+                <Link href="/shop" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> All Products
                 </Link>
               </li>
               <li>
-                <Link href="/makhana-snacks" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
-                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Makhana Snacks
+                <Link href="/product/superfood-fusion" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Superfood Fusion Mix
                 </Link>
               </li>
               <li>
-                <Link href="/mixed-fresh-fruits" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
-                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Mixed Fresh Fruits
+                <Link href="/product/foxnut-makhana" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Roasted Makhana
                 </Link>
               </li>
               <li>
-                <Link href="/corporate" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
-                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Corporate Gifting
+                <Link href="/product/fruit-box" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#25D366] group-hover:translate-x-1 transition-transform">›</span> Fresh Fruit Boxes
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
-                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> About Us
+                <Link href="/founder-story" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Our Story
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Contact Us
                 </Link>
               </li>
             </ul>
@@ -104,11 +109,6 @@ export default function Footer() {
               Customer Service
             </h4>
             <ul className="space-y-3">
-              <li>
-                <Link href="/contact" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
-                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Contact Us
-                </Link>
-              </li>
               <li>
                 <Link href="/faq" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
                   <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> FAQ
@@ -134,6 +134,11 @@ export default function Footer() {
                   <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Terms & Conditions
                 </Link>
               </li>
+              <li>
+                <Link href="/disclaimer" className="text-sm text-[#5D4E37] hover:text-[#D4A574] transition-colors font-medium flex items-center gap-2 group">
+                  <span className="text-[#D4A574] group-hover:translate-x-1 transition-transform">›</span> Disclaimer
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -147,10 +152,10 @@ export default function Footer() {
               <li className="flex items-start gap-3 group">
                 <Mail className="w-5 h-5 text-[#D4A574] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                 <a 
-                  href="mailto:care@vyadhiharfoods.com" 
+                  href="mailto:support@vyadhiharfoods.com" 
                   className="text-sm text-[#5D4E37] hover:text-[#D4A574] font-medium transition-colors break-all"
                 >
-                  care@vyadhiharfoods.com
+                  support@vyadhiharfoods.com
                 </a>
               </li>
               <li className="flex items-start gap-3 group">
@@ -159,24 +164,24 @@ export default function Footer() {
                   href="tel:+917428408825" 
                   className="text-sm text-[#5D4E37] hover:text-[#D4A574] font-medium transition-colors"
                 >
-                  +91 74284 08825
+                  +91 742 840 8825
                 </a>
               </li>
               <li className="flex items-start gap-3 group">
                 <FaWhatsapp className="w-5 h-5 text-[#25D366] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                 <a 
-                  href="https://wa.me/917428408825?text=Hi,%20I%20want%20to%20enquire%20about%20bulk%20orders" 
+                  href="https://wa.me/917428408825?text=Hi,%20I%20want%20to%20enquire%20about%20your%20products" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[#5D4E37] hover:text-[#D4A574] font-medium transition-colors"
                 >
-                  WhatsApp for Bulk Orders
+                  WhatsApp for Enquiries
                 </a>
               </li>
               <li className="flex items-start gap-3 group">
                 <MapPin className="w-5 h-5 text-[#D4A574] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                 <span className="text-sm text-[#5D4E37] font-light leading-relaxed">
-                  123 Health Street, Organic Market, New Delhi - 110001, India
+                  Delhi NCR, India
                 </span>
               </li>
             </ul>
@@ -236,11 +241,11 @@ export default function Footer() {
               <span className="flex items-center gap-1 text-[#5D4E37] font-semibold">
                 <Sparkles className="w-3.5 h-3.5 text-[#D4A574]" /> 100% Natural
               </span>
-              <span className="text-[#D4A574]">•</span>
+              <span className="text-[#D4A574]">- </span>
               <span className="flex items-center gap-1 text-[#5D4E37] font-semibold">
                 ✓ Premium Quality
               </span>
-              <span className="text-[#D4A574]">•</span>
+              <span className="text-[#D4A574]">- </span>
               <span className="flex items-center gap-1 text-[#5D4E37] font-semibold">
                 🚚 Fast Delivery
               </span>
