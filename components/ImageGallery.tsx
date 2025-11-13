@@ -428,7 +428,7 @@ export default function ImageGallery({ images }: { images: Image[] }) {
           ))}
         </div>
       )}
-
+      
       {/* ----- FULLSCREEN MODAL ----- */}
       {isFullscreen && (
         <div
