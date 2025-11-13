@@ -433,7 +433,7 @@ export default function ImageGallery({ images }: { images: Image[] }) {
       {isFullscreen && (
         <div
           ref={fullscreenRef}
-          className="fixed inset-0 bg-white z-10 flex flex-col items-center justify-center p-4"
+          className="fixed inset-0 bg-white z-55 flex flex-col items-center justify-center p-4"
           style={{ 
             width: "100vw", 
             height: "100vh",
@@ -455,7 +455,7 @@ export default function ImageGallery({ images }: { images: Image[] }) {
           </button>
 
           {/* Fullscreen Image */}
-          <div className="relative w-full flex-1 flex items-center justify-center">
+          <div className="relative w-full flex-1 z-55 flex items-center justify-center">
             <img
               src={displayImages[active].src}
               alt={displayImages[active].alt || `Product image ${active + 1}`}

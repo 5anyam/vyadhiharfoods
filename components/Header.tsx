@@ -78,7 +78,7 @@ export default function Header() {
       </div>
 
       {/* Main Header with Golden Theme */}
-      <header className="sticky top-0 bg-white shadow-lg border-b-2 border-[#D4A574]/30">
+      <header className="sticky z-50 top-0 bg-white shadow-lg border-b-2 border-[#D4A574]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             
@@ -147,7 +147,7 @@ export default function Header() {
       )}
 
       {/* Mobile Menu with Golden Theme */}
-      <div className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transition-transform duration-300 lg:hidden ${
+      <div className={`fixed top-0 z-50 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transition-transform duration-300 lg:hidden ${
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         
