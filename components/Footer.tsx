@@ -49,7 +49,7 @@ export default function Footer() {
               </Link>
               <Link 
                 target="_blank"
-                href="https://wa.me/917428408825" 
+                href="https://wa.me/919217207717" 
                 className="p-3 bg-[#25D366]/10 border-2 border-[#25D366]/30 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all duration-300 rounded-lg shadow-sm hover:shadow-md hover:scale-110"
               >
                 <FaWhatsapp className="text-sm" />
@@ -161,7 +161,7 @@ export default function Footer() {
               <li className="flex items-start gap-3 group">
                 <Phone className="w-5 h-5 text-[#D4A574] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                 <a 
-                  href="tel:+917428408825" 
+                  href="tel:+919217207717" 
                   className="text-sm text-[#5D4E37] hover:text-[#D4A574] font-medium transition-colors"
                 >
                   +91 742 840 8825
@@ -170,7 +170,7 @@ export default function Footer() {
               <li className="flex items-start gap-3 group">
                 <FaWhatsapp className="w-5 h-5 text-[#25D366] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                 <a 
-                  href="https://wa.me/917428408825?text=Hi,%20I%20want%20to%20enquire%20about%20your%20products" 
+                  href="https://wa.me/919217207717?text=Hi,%20I%20want%20to%20enquire%20about%20your%20products" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[#5D4E37] hover:text-[#D4A574] font-medium transition-colors"

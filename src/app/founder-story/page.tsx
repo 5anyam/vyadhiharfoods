@@ -320,7 +320,7 @@ export default function FounderStoryPage() {
               <span>Shop Now</span>
             </Link>
             <a
-              href="https://wa.me/917428408825?text=Hi,%20I%20want%20to%20connect%20with%20Keshav"
+              href="https://wa.me/919217207717?text=Hi,%20I%20want%20to%20connect%20with%20Keshav"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-10 py-4 text-base font-bold text-white bg-[#25D366] hover:bg-[#20BA5A] transition-all duration-300 rounded-full shadow-2xl hover:shadow-green-500/50 hover:scale-105"

@@ -235,7 +235,7 @@ export default function ReturnsRefundPolicy() {
               </p>
               <div className="space-y-2">
                 <p className="text-gray-700">
-                  <strong>WhatsApp:</strong> <a href="https://wa.me/917428408825" className="text-[#D4A574] hover:text-[#C19A6B]">+91 742 840 8825</a>
+                  <strong>WhatsApp:</strong> <a href="https://wa.me/919217207717" className="text-[#D4A574] hover:text-[#C19A6B]">+91 742 840 8825</a>
                 </p>
                 <p className="text-gray-700">
                   <strong>Email:</strong> <a href="mailto:support@vyadhiharfoods.com" className="text-[#D4A574] hover:text-[#C19A6B]">support@vyadhiharfoods.com</a>

@@ -40,7 +40,7 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   const handleFruitBoxEnquiry = () => {
-    const phoneNumber = "917428408825";
+    const phoneNumber = "919217207717";
     const message = "Hi, I'd like to enquire about fresh fruit boxes for daily delivery.";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
@@ -62,8 +62,8 @@ export default function Header() {
               </span>
             </div>
             <div className="flex items-center gap-3 sm:gap-4">
-              <a href="tel:+917428408825" className="hover:text-[#D4A574] transition-colors font-medium">
-                📞 +91 74284 08825
+              <a href="tel:+919217207717" className="hover:text-[#D4A574] transition-colors font-medium">
+                📞 +91 92172 07717
               </a>
               <button
                 onClick={handleFruitBoxEnquiry}

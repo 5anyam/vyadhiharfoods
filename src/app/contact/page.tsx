@@ -66,8 +66,8 @@ export default function ContactPage() {
           <h3 className="text-xl font-semibold text-[#5D4E37] mb-4 text-center">Call Us</h3>
           <p className="text-gray-600 text-center mb-4 text-sm">Speak directly with our customer care team</p>
           <div className="text-center">
-            <a href="tel:+917428408825" className="text-[#C19A6B] hover:text-[#D4A574] font-semibold text-lg transition-colors">
-              +91 742 840 8825
+            <a href="tel:+919217207717" className="text-[#C19A6B] hover:text-[#D4A574] font-semibold text-lg transition-colors">
+              +91 92172 07717
             </a>
           </div>
         </div>
@@ -245,7 +245,7 @@ export default function ContactPage() {
                   <div className="text-gray-700 space-y-1 text-sm">
                     <p>Daily fresh deliveries available</p>
                     <p>Contact for subscription plans</p>
-                    <p><a href="https://wa.me/917428408825" className="text-[#25D366] font-semibold hover:text-[#20BA5A]">WhatsApp for enquiries →</a></p>
+                    <p><a href="https://wa.me/919217207717" className="text-[#25D366] font-semibold hover:text-[#20BA5A]">WhatsApp for enquiries →</a></p>
                   </div>
                 </div>
               </div>
@@ -300,13 +300,13 @@ export default function ContactPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="tel:+917428408825"
+            href="tel:+919217207717"
             className="bg-white text-[#5D4E37] px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             📞 Call Now
           </a>
           <a
-            href="https://wa.me/917428408825"
+            href="https://wa.me/919217207717"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#25D366] hover:bg-[#20BA5A] text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"

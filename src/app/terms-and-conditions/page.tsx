@@ -91,8 +91,8 @@ export default function TermsAndConditions() {
                   </div>
                   <div>
                     <p className="font-semibold text-[#5D4E37]">WhatsApp:</p>
-                    <a href="https://wa.me/917428408825" className="text-[#D4A574] hover:text-[#C19A6B]">
-                      +91 742 840 8825
+                    <a href="https://wa.me/919217207717" className="text-[#D4A574] hover:text-[#C19A6B]">
+                      +91 92172 07717
                     </a>
                   </div>
                 </div>
