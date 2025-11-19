@@ -729,235 +729,236 @@ export default function Checkout(): React.ReactElement {
               </div>
 
               {/* Form */}
-              <form onSubmit={handleCheckout} className="bg-white border-2 border-[#D4A574]/30 rounded-2xl p-6 shadow-lg">
-                <h2 className="text-lg font-bold text-[#5D4E37] mb-6">Delivery Information</h2>
+<form onSubmit={handleCheckout} className="bg-white border-2 border-[#D4A574]/30 rounded-2xl p-6 shadow-lg">
+  <h2 className="text-lg font-bold text-[#5D4E37] mb-6">Delivery Information</h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-                    <input
-                      name="name"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.name 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      placeholder="Enter your full name"
-                      value={form.name}
-                      onChange={onChange}
-                    />
-                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                  </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+      <input
+        name="name"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none ${
+          errors.name 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        placeholder="Enter your full name"
+        value={form.name}
+        onChange={onChange}
+      />
+      {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+    </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.email 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      placeholder="your@email.com"
-                      value={form.email}
-                      onChange={onChange}
-                    />
-                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                  </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
+      <input
+        name="email"
+        type="email"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none ${
+          errors.email 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        placeholder="your@email.com"
+        value={form.email}
+        onChange={onChange}
+      />
+      {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+    </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
-                    <input
-                      name="phone"
-                      type="tel"
-                      pattern="[0-9]{10}"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.phone 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      placeholder="10-digit mobile number"
-                      value={form.phone}
-                      onChange={onChange}
-                    />
-                    {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-                  </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+      <input
+        name="phone"
+        type="tel"
+        pattern="[0-9]{10}"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none ${
+          errors.phone 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        placeholder="10-digit mobile number"
+        value={form.phone}
+        onChange={onChange}
+      />
+      {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+    </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      WhatsApp Number * 
-                      <button
-                        type="button"
-                        onClick={copyPhoneToWhatsApp}
-                        className="ml-2 text-xs bg-[#D4A574] text-white px-3 py-1 rounded-full hover:bg-[#C19A6B] transition-colors"
-                      >
-                        Same as phone
-                      </button>
-                    </label>
-                    <input
-                      name="whatsapp"
-                      type="tel"
-                      pattern="[0-9]{10}"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.whatsapp 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      placeholder="WhatsApp number"
-                      value={form.whatsapp}
-                      onChange={onChange}
-                    />
-                    {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
-                  </div>
-                </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        WhatsApp Number * 
+        <button
+          type="button"
+          onClick={copyPhoneToWhatsApp}
+          className="ml-2 text-xs bg-[#D4A574] text-white px-3 py-1 rounded-full hover:bg-[#C19A6B] transition-colors"
+        >
+          Same as phone
+        </button>
+      </label>
+      <input
+        name="whatsapp"
+        type="tel"
+        pattern="[0-9]{10}"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none ${
+          errors.whatsapp 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        placeholder="WhatsApp number"
+        value={form.whatsapp}
+        onChange={onChange}
+      />
+      {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
+    </div>
+  </div>
 
-                <div className="mb-4">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Complete Address *</label>
-                  <textarea
-                    name="address"
-                    rows={3}
-                    required
-                    className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none resize-none ${
-                      errors.address 
-                        ? 'border-red-300 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-[#D4A574]'
-                    }`}
-                    placeholder="House/Flat No., Street, Area, Landmark"
-                    value={form.address}
-                    onChange={onChange}
-                  />
-                  {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
-                </div>
+  <div className="mb-4">
+    <label className="block text-sm font-semibold text-gray-700 mb-2">Complete Address *</label>
+    <textarea
+      name="address"
+      rows={3}
+      required
+      className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none resize-none ${
+        errors.address 
+          ? 'border-red-300 focus:border-red-500' 
+          : 'border-gray-200 focus:border-[#D4A574]'
+      }`}
+      placeholder="House/Flat No., Street, Area, Landmark"
+      value={form.address}
+      onChange={onChange}
+    />
+    {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Pincode *</label>
-                    <input
-                      name="pincode"
-                      type="text"
-                      pattern="[0-9]{6}"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.pincode 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      placeholder="6-digit pincode"
-                      value={form.pincode}
-                      onChange={onChange}
-                    />
-                    {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>}
-                  </div>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">Pincode *</label>
+      <input
+        name="pincode"
+        type="text"
+        pattern="[0-9]{6}"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none ${
+          errors.pincode 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        placeholder="6-digit pincode"
+        value={form.pincode}
+        onChange={onChange}
+      />
+      {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>}
+    </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">City *</label>
-                    <input
-                      name="city"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.city 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      placeholder="City"
-                      value={form.city}
-                      onChange={onChange}
-                    />
-                    {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-                  </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">City *</label>
+      <input
+        name="city"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none ${
+          errors.city 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        placeholder="City"
+        value={form.city}
+        onChange={onChange}
+      />
+      {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+    </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">State *</label>
-                    <select
-                      name="state"
-                      required
-                      className={`w-full p-3 border-2 rounded-lg text-sm transition-colors focus:outline-none ${
-                        errors.state 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-[#D4A574]'
-                      }`}
-                      value={form.state}
-                      onChange={onChange}
-                    >
-                      <option value="">Select State</option>
-                      <option value="Delhi">Delhi</option>
-                      <option value="Maharashtra">Maharashtra</option>
-                      <option value="Karnataka">Karnataka</option>
-                      <option value="Tamil Nadu">Tamil Nadu</option>
-                      <option value="Uttar Pradesh">Uttar Pradesh</option>
-                      <option value="West Bengal">West Bengal</option>
-                      <option value="Rajasthan">Rajasthan</option>
-                      <option value="Gujarat">Gujarat</option>
-                      <option value="Madhya Pradesh">Madhya Pradesh</option>
-                      <option value="Punjab">Punjab</option>
-                      <option value="Haryana">Haryana</option>
-                      <option value="Bihar">Bihar</option>
-                      <option value="Odisha">Odisha</option>
-                      <option value="Telangana">Telangana</option>
-                      <option value="Andhra Pradesh">Andhra Pradesh</option>
-                      <option value="Kerala">Kerala</option>
-                      <option value="Assam">Assam</option>
-                      <option value="Jharkhand">Jharkhand</option>
-                      <option value="Chhattisgarh">Chhattisgarh</option>
-                      <option value="Uttarakhand">Uttarakhand</option>
-                      <option value="Himachal Pradesh">Himachal Pradesh</option>
-                      <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                      <option value="Goa">Goa</option>
-                    </select>
-                    {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
-                  </div>
-                </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">State *</label>
+      <select
+        name="state"
+        required
+        className={`w-full p-3 border-2 rounded-lg text-sm text-gray-900 transition-colors focus:outline-none ${
+          errors.state 
+            ? 'border-red-300 focus:border-red-500' 
+            : 'border-gray-200 focus:border-[#D4A574]'
+        }`}
+        value={form.state}
+        onChange={onChange}
+      >
+        <option value="" className="text-gray-400">Select State</option>
+        <option value="Delhi">Delhi</option>
+        <option value="Maharashtra">Maharashtra</option>
+        <option value="Karnataka">Karnataka</option>
+        <option value="Tamil Nadu">Tamil Nadu</option>
+        <option value="Uttar Pradesh">Uttar Pradesh</option>
+        <option value="West Bengal">West Bengal</option>
+        <option value="Rajasthan">Rajasthan</option>
+        <option value="Gujarat">Gujarat</option>
+        <option value="Madhya Pradesh">Madhya Pradesh</option>
+        <option value="Punjab">Punjab</option>
+        <option value="Haryana">Haryana</option>
+        <option value="Bihar">Bihar</option>
+        <option value="Odisha">Odisha</option>
+        <option value="Telangana">Telangana</option>
+        <option value="Andhra Pradesh">Andhra Pradesh</option>
+        <option value="Kerala">Kerala</option>
+        <option value="Assam">Assam</option>
+        <option value="Jharkhand">Jharkhand</option>
+        <option value="Chhattisgarh">Chhattisgarh</option>
+        <option value="Uttarakhand">Uttarakhand</option>
+        <option value="Himachal Pradesh">Himachal Pradesh</option>
+        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+        <option value="Goa">Goa</option>
+      </select>
+      {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
+    </div>
+  </div>
 
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Order Notes (Optional)</label>
-                  <textarea
-                    name="notes"
-                    rows={2}
-                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-[#D4A574] focus:outline-none transition-colors text-sm resize-none"
-                    placeholder="Any special instructions for your order"
-                    value={form.notes}
-                    onChange={onChange}
-                  />
-                </div>
+  <div className="mb-6">
+    <label className="block text-sm font-semibold text-gray-700 mb-2">Order Notes (Optional)</label>
+    <textarea
+      name="notes"
+      rows={2}
+      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-[#D4A574] focus:outline-none transition-colors text-sm text-gray-900 placeholder:text-gray-400 resize-none"
+      placeholder="Any special instructions for your order"
+      value={form.notes}
+      onChange={onChange}
+    />
+  </div>
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className={`w-full bg-gradient-to-r from-[#D4A574] to-[#C19A6B] hover:from-[#C19A6B] hover:to-[#8B7355] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-xl hover:shadow-2xl ${
-                    loading || step === "processing" || (paymentMethod === "online" && !razorpayLoaded)
-                      ? "opacity-60 pointer-events-none" 
-                      : ""
-                  }`}
-                  disabled={loading || step === "processing" || (paymentMethod === "online" && !razorpayLoaded)}
-                >
-                  {loading || step === "processing" ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Processing Order...
-                    </div>
-                  ) : paymentMethod === "online" && !razorpayLoaded ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Loading Payment...
-                    </div>
-                  ) : paymentMethod === "cod" ? (
-                    `Place Order - ₹${finalTotal.toFixed(2)} (Pay on Delivery)`
-                  ) : (
-                    `Pay ₹${finalTotal.toFixed(2)} Securely`
-                  )}
-                </button>
+  {/* Submit Button */}
+  <button
+    type="submit"
+    className={`w-full bg-gradient-to-r from-[#D4A574] to-[#C19A6B] hover:from-[#C19A6B] hover:to-[#8B7355] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-xl hover:shadow-2xl ${
+      loading || step === "processing" || (paymentMethod === "online" && !razorpayLoaded)
+        ? "opacity-60 pointer-events-none" 
+        : ""
+    }`}
+    disabled={loading || step === "processing" || (paymentMethod === "online" && !razorpayLoaded)}
+  >
+    {loading || step === "processing" ? (
+      <div className="flex items-center justify-center">
+        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+        Processing Order...
+      </div>
+    ) : paymentMethod === "online" && !razorpayLoaded ? (
+      <div className="flex items-center justify-center">
+        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+        Loading Payment...
+      </div>
+    ) : paymentMethod === "cod" ? (
+      `Place Order - ₹${finalTotal.toFixed(2)} (Pay on Delivery)`
+    ) : (
+      `Pay ₹${finalTotal.toFixed(2)} Securely`
+    )}
+  </button>
 
-                {step === "processing" && (
-                  <div className="text-center text-gray-600 text-sm mt-3">
-                    {paymentMethod === "cod" ? "Creating your order..." : "Processing payment..."}
-                  </div>
-                )}
-              </form>
+  {step === "processing" && (
+    <div className="text-center text-gray-600 text-sm mt-3">
+      {paymentMethod === "cod" ? "Creating your order..." : "Processing payment..."}
+    </div>
+  )}
+</form>
+
 
               {/* Trust Signals */}
               <div className="mt-6 flex items-center justify-center gap-6 text-gray-600 text-xs">
