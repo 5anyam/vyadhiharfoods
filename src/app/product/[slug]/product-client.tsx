@@ -14,18 +14,43 @@ import RelatedProducts from '../../../../components/RelatedProducts'
 import ProductReviews from '../../../../components/ProductReviews'
 import { Heart, Star, Shield, Truck, Award, CreditCard, Plus, Minus, ShoppingCart, Sparkles, Leaf, CheckCircle, Utensils } from 'lucide-react'
 
+// --- Types ---
 export interface ImageData { src: string }
-export interface Attribute { option: string }
+export interface Attribute { 
+  id: number
+  name: string
+  option: string // For simple products (sometimes single string)
+  options?: string[] // For variable products
+  visible?: boolean
+  variation?: boolean
+}
+
+// Interface for specific variation data
+export interface ProductVariation {
+  id: number
+  price: string
+  regular_price: string
+  attributes: {
+    id: number
+    name: string
+    option: string
+  }[]
+  image?: ImageData
+}
+
 export interface Product {
   id: number
   name: string
   slug: string
+  type: 'simple' | 'variable' // Added type
   price: string
   regular_price: string
   description?: string
   short_description?: string
   images: ImageData[]
   attributes?: Attribute[]
+  variations?: number[] // IDs of variations
+  variationData?: ProductVariation[] // Enriched variation data (fetched or passed)
 }
 
 export default function ProductClient({
@@ -58,19 +83,48 @@ export default function ProductClient({
   const [isBuyingNow, setIsBuyingNow] = useState(false)
   const [isWishlisted, setIsWishlisted] = useState(false)
 
-  // Check if product is fruit box
-  const isFruitBox = product?.slug === 'fruit-box' || product?.slug.includes('fruit-box')
+  // --- Variation State ---
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
+  const [currentVariation, setCurrentVariation] = useState<ProductVariation | null>(null)
 
+  // Initialize default attributes if variable product
+  useEffect(() => {
+    if (product?.type === 'variable' && product.attributes) {
+      const defaults: Record<string, string> = {}
+      product.attributes.forEach(attr => {
+        if (attr.variation && attr.options && attr.options.length > 0) {
+          defaults[attr.name] = attr.options[0]
+        }
+      })
+      setSelectedAttributes(defaults)
+    }
+  }, [product])
+
+  // Find matching variation when attributes change
+  useEffect(() => {
+    if (product?.type === 'variable' && product.variationData) {
+      const match = product.variationData.find(v => {
+        return v.attributes.every(vAttr => selectedAttributes[vAttr.name] === vAttr.option)
+      })
+      setCurrentVariation(match || null)
+    }
+  }, [selectedAttributes, product])
+
+  // Facebook Pixel
   useEffect(() => {
     if (product) {
       trackViewContent({
-        id: product.id,
+        id: currentVariation ? currentVariation.id : product.id,
         name: product.name,
-        price: product.price,
+        price: currentVariation ? currentVariation.price : product.price,
       })
     }
-  }, [product, trackViewContent])
+  }, [product, currentVariation, trackViewContent])
 
+  // Check if product is fruit box
+  const isFruitBox = product?.slug === 'fruit-box' || product?.slug?.includes('fruit-box')
+
+  // --- Loading / Error States ---
   if (isLoading && !product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#FFF8DC] to-white">
@@ -99,8 +153,13 @@ export default function ProductClient({
     )
   }
 
-  const salePrice = parseFloat(product.price || '0')
-  const regularPrice = parseFloat(product.regular_price || product.price || '0')
+  // --- Pricing Logic ---
+  // If variable, use variation price. If simple, use product price.
+  const activePrice = currentVariation ? currentVariation.price : product.price
+  const activeRegularPrice = currentVariation ? currentVariation.regular_price : (product.regular_price || product.price)
+
+  const salePrice = parseFloat(activePrice || '0')
+  const regularPrice = parseFloat(activeRegularPrice || '0')
   const hasSale = salePrice < regularPrice
   const discountPercent = hasSale ? Math.round(((regularPrice - salePrice) / regularPrice) * 100) : 0
   const totalPrice = salePrice * quantity
@@ -111,18 +170,43 @@ export default function ProductClient({
     setQuantity(Math.max(1, quantity + delta))
   }
 
+  const handleAttributeSelect = (attributeName: string, option: string) => {
+    setSelectedAttributes(prev => ({
+      ...prev,
+      [attributeName]: option
+    }))
+  }
+
   const handleAddToCart = async () => {
+    // Validation for variable products
+    if (product.type === 'variable' && !currentVariation) {
+      toast({ title: 'Select Options', description: 'Please select all options before adding to cart.', variant: 'destructive' })
+      return
+    }
+
     setIsAddingToCart(true)
     try {
-      for (let i = 0; i < quantity; i++) {
-        addToCart({
-          ...product,
-          name: product.name,
-          price: salePrice.toString(),
-          images: product.images || [],
-        })
+      const itemToAdd = {
+        ...product,
+        // Override ID and Price if variation is selected
+        id: currentVariation ? currentVariation.id : product.id, 
+        variation_id: currentVariation ? currentVariation.id : undefined,
+        name: product.name, // Keep main name, cart usually handles displaying attributes
+        price: salePrice.toString(),
+        images: (currentVariation?.image ? [currentVariation.image] : product.images) || [],
+        selectedAttributes: currentVariation ? selectedAttributes : undefined
       }
-      trackAddToCart({ id: product.id, name: product.name, price: salePrice }, quantity)
+
+      for (let i = 0; i < quantity; i++) {
+        addToCart(itemToAdd)
+      }
+      
+      trackAddToCart({ 
+        id: itemToAdd.id, 
+        name: itemToAdd.name, 
+        price: salePrice 
+      }, quantity)
+
       toast({
         title: 'Added to Cart',
         description: `${quantity} x ${product.name} added to your cart.`,
@@ -136,20 +220,32 @@ export default function ProductClient({
   }
 
   const handleBuyNow = async () => {
+    if (product.type === 'variable' && !currentVariation) {
+      toast({ title: 'Select Options', description: 'Please select all options.', variant: 'destructive' })
+      return
+    }
+
     setIsBuyingNow(true)
     try {
-      for (let i = 0; i < quantity; i++) {
-        addToCart({
-          ...product,
-          name: product.name,
-          price: salePrice.toString(),
-          images: product.images || [],
-        })
+      const itemToAdd = {
+        ...product,
+        id: currentVariation ? currentVariation.id : product.id,
+        variation_id: currentVariation ? currentVariation.id : undefined,
+        name: product.name,
+        price: salePrice.toString(),
+        images: (currentVariation?.image ? [currentVariation.image] : product.images) || [],
+        selectedAttributes: currentVariation ? selectedAttributes : undefined
       }
-      trackAddToCart({ id: product.id, name: product.name, price: salePrice }, quantity)
-      const cartItems = [{ id: product.id, name: product.name, price: salePrice, quantity }]
+
+      for (let i = 0; i < quantity; i++) {
+        addToCart(itemToAdd)
+      }
+
+      trackAddToCart({ id: itemToAdd.id, name: itemToAdd.name, price: salePrice }, quantity)
+      const cartItems = [{ id: itemToAdd.id, name: itemToAdd.name, price: salePrice, quantity }]
       const total = salePrice * quantity
       trackInitiateCheckout(cartItems, total)
+      
       setTimeout(() => {
         router.push('/checkout')
         setIsBuyingNow(false)
@@ -162,7 +258,13 @@ export default function ProductClient({
   }
 
   const handleEnquire = () => {
-    const message = `Hi, I want to enquire about ${product.name}`;
+    // Include selected attributes in enquiry if applicable
+    let message = `Hi, I want to enquire about ${product.name}`;
+    if (product.type === 'variable' && Object.keys(selectedAttributes).length > 0) {
+      const attrs = Object.entries(selectedAttributes).map(([k, v]) => `${k}: ${v}`).join(', ')
+      message += ` (${attrs})`
+    }
+    
     const whatsappUrl = `https://wa.me/917428408825?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   }
@@ -186,7 +288,10 @@ export default function ProductClient({
         {/* Image Section */}
         <div className="lg:w-1/2">
           <div className="sticky top-8">
-            <ImageGallery images={product.images || []} />
+            {/* Show variation image if available, otherwise default images */}
+            <ImageGallery 
+              images={currentVariation?.image ? [currentVariation.image, ...product.images] : (product.images || [])} 
+            />
             
             {/* Trust Indicators Below Images */}
             <div className="mt-6 grid grid-cols-3 gap-4">
@@ -261,6 +366,36 @@ export default function ProductClient({
               />
             )}
 
+            {/* Variation Selector */}
+            {product.type === 'variable' && product.attributes && (
+              <div className="space-y-4 py-4">
+                {product.attributes.map((attr) => (
+                  attr.variation && attr.options && attr.options.length > 0 ? (
+                    <div key={attr.id} className="space-y-2">
+                      <span className="text-sm font-bold text-[#5D4E37] uppercase tracking-wide">
+                        Select {attr.name}: <span className="text-[#D4A574]">{selectedAttributes[attr.name]}</span>
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {attr.options.map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => handleAttributeSelect(attr.name, option)}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all ${
+                              selectedAttributes[attr.name] === option
+                                ? 'border-[#D4A574] bg-[#D4A574] text-white shadow-md'
+                                : 'border-[#D4A574]/30 text-[#5D4E37] hover:border-[#D4A574]'
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                ))}
+              </div>
+            )}
+
             {/* Price Section - Hide for Fruit Box */}
             {!isFruitBox && (
               <div className="py-6 border-y-2 border-[#D4A574]/20 bg-gradient-to-br from-[#FFF8DC] to-white rounded-xl p-6">
@@ -332,6 +467,7 @@ export default function ProductClient({
                   className="w-full border-2 border-[#25D366] bg-[#25D366] text-white font-bold px-8 py-4 text-lg rounded-xl hover:bg-[#20BA5A] hover:border-[#20BA5A] transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
                   onClick={handleEnquire}
                 >
+                   {/* WhatsApp Icon */}
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                   </svg>
@@ -398,12 +534,12 @@ export default function ProductClient({
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#D4A574]/30 z-50 p-4 shadow-2xl">
         <div className="max-w-md mx-auto">
           {isFruitBox ? (
-            // Only Enquire Now button for Fruit Box on mobile
-            <button
+             <button
               className="w-full border-2 border-[#25D366] bg-[#25D366] text-white font-bold px-6 py-4 text-base rounded-xl hover:bg-[#20BA5A] transition-all shadow-lg flex items-center justify-center gap-2"
               onClick={handleEnquire}
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              {/* WhatsApp Icon */}
+               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
               </svg>
               <span>Enquire Now</span>

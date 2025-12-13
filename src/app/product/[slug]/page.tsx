@@ -5,37 +5,70 @@ import { fetchProducts } from '../../../../lib/woocommerceApi'
 
 // ✅ Updated: Make params a Promise
 type Props = { 
-  params: Promise<{ slug: string }>  // ← Changed to Promise
+  params: Promise<{ slug: string }>
 }
 
+// ✅ Updated: Match WooCommerce API response structure more closely
 type ProductWire = {
   id: number
   name: string
   slug: string
+  type?: 'simple' | 'variable' // Added type from API
   price: string
   regular_price: string
   description?: string
   short_description?: string
   images?: Array<{ src: string }>
-  attributes?: Array<{ option: string }>
+  variations?: number[]
+  attributes?: Array<{
+    id: number
+    name: string
+    option?: string
+    options?: string[]
+    visible?: boolean
+    variation?: boolean
+  }>
 }
 
+// ✅ Updated: This now matches the 'Product' interface in your Client Component
 type ProductNormalized = {
   id: number
   name: string
   slug: string
+  type: 'simple' | 'variable' // Required by Client
   price: string
   regular_price: string
   description?: string
   short_description?: string
   images: Array<{ src: string }>
-  attributes?: Array<{ option: string }>
+  variations?: number[]
+  attributes?: Array<{
+    id: number
+    name: string
+    option: string
+    options?: string[]
+    visible?: boolean
+    variation?: boolean
+  }>
 }
 
 function normalizeProduct(p: ProductWire): ProductNormalized {
   return {
     ...p,
+    // ✅ Fix: Default to 'simple' if type is missing
+    type: p.type || 'simple', 
     images: Array.isArray(p.images) ? p.images : [],
+    // ✅ Fix: Normalize attributes to ensure they have the fields Client expects
+    attributes: p.attributes?.map(attr => ({
+      id: attr.id,
+      name: attr.name,
+      // Ensure 'option' exists (use first option if only 'options' array exists)
+      option: attr.option || (attr.options && attr.options.length > 0 ? attr.options[0] : ''),
+      options: attr.options || [],
+      visible: attr.visible,
+      variation: attr.variation
+    })) || [],
+    variations: p.variations || []
   }
 }
 
@@ -54,7 +87,7 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { slug } = await params  // ← Await params here
+  const { slug } = await params
   const product = await getProductBySlug(slug)
 
   if (!product) {
@@ -158,9 +191,10 @@ export async function generateMetadata(
 
 // ✅ Updated: Await params in Page component
 export default async function Page({ params }: Props) {
-  const { slug } = await params  // ← Await params here
+  const { slug } = await params
   const product = await getProductBySlug(slug)
   const products = await getAllProducts()
+  
   return (
     <ProductClient
       initialProduct={product}
