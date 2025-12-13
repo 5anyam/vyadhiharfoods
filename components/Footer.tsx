@@ -164,7 +164,7 @@ export default function Footer() {
                   href="tel:+919217207717" 
                   className="text-sm text-[#5D4E37] hover:text-[#D4A574] font-medium transition-colors"
                 >
-                  +91 742 840 8825
+                  +91 92172 07717
                 </a>
               </li>
               <li className="flex items-start gap-3 group">
