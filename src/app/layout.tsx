@@ -8,6 +8,7 @@ import Script from 'next/script';
 import AnnouncementBar from '../../components/anouncement';
 import { Suspense } from 'react';
 import Whatsapp from '../../components/Whatsapp';
+import Loading from './loading'; // Import the loading component created above
 
 export const metadata = {
   title: 'Vyadhihar Foods - Premium Dry Fruits & Natural Snacks',
@@ -65,9 +66,11 @@ export const metadata = {
   },
 };
 
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const fbPixelId = 'YOUR_FB_PIXEL_ID'; // Replace with actual Vyadhihar FB Pixel ID
   const gtagId = 'YOUR_GTAG_ID'; // Replace with actual Vyadhihar Google Ads ID
+
 
   return (
     <html lang="en">
@@ -153,6 +156,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
+
         {/* Product Schema */}
         <script
           type="application/ld+json"
@@ -184,6 +188,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
+
         {/* Facebook Pixel Script */}
         <Script id="facebook-pixel" strategy="afterInteractive">
           {`
@@ -206,6 +211,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             });
           `}
         </Script>
+
 
         {/* Google Analytics */}
         <Script 
@@ -236,6 +242,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
 
+
         {/* Google Tag Manager (Optional) */}
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
@@ -246,6 +253,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             })(window,document,'script','dataLayer','GTM-XXXXXXX');
           `}
         </Script>
+
 
         {/* Facebook Pixel noscript fallback */}
         <noscript>
@@ -269,14 +277,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ></iframe>
         </noscript>
 
+
         <ReactQueryProvider>
           <CartProvider>
-            <AnnouncementBar />
-            <Header />
-            <main role="main">
-              {children}
-            </main>
-            <Footer />
+            <div className="flex flex-col min-h-screen">
+              <AnnouncementBar />
+              <Header />
+              
+              <main role="main" className="flex-grow">
+                {/* 
+                  Wrapping children in Suspense ensures that when navigating,
+                  only this main area shows the fallback Loading component.
+                  Header and Footer remain visible.
+                */}
+                <Suspense fallback={<Loading />}>
+                  {children}
+                </Suspense>
+              </main>
+
+              <Footer />
+            </div>
             <Whatsapp/>
             
             {/* Facebook Pixel Route Tracking */}
@@ -285,6 +305,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Suspense>
           </CartProvider>
         </ReactQueryProvider>
+
 
         {/* Customer Chat Plugin (Optional) */}
         <Script id="facebook-chat" strategy="lazyOnload">
