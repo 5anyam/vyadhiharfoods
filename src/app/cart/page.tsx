@@ -3,16 +3,40 @@ import Link from "next/link";
 import { useCart } from "../../../lib/cart";
 import { Trash2, Minus, Plus, Package, Star } from "lucide-react";
 
+// Define proper types for cart items
+interface CartItemImage {
+  src: string;
+  alt?: string;
+}
+
+interface CartItem {
+  id: number;
+  variation_id?: number;
+  name: string;
+  price: string;
+  regular_price?: string;
+  quantity: number;
+  images?: CartItemImage[];
+  selectedAttributes?: Record<string, string>;
+}
+
+interface CartContextType {
+  items: CartItem[];
+  increment: (id: number) => void;
+  decrement: (id: number) => void;
+  removeFromCart: (id: number) => void;
+}
+
 export default function CartPage() {
-  const { items, increment, decrement, removeFromCart } = useCart();
+  const { items, increment, decrement, removeFromCart } = useCart() as CartContextType;
   
   // Debug: Console mein items print karo
   console.log('Cart Items:', items);
   
-  const total = items.reduce((sum, i) => sum + parseFloat(i.price) * i.quantity, 0);
-  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const total = items.reduce((sum: number, i: CartItem) => sum + parseFloat(i.price) * i.quantity, 0);
+  const totalItems = items.reduce((sum: number, i: CartItem) => sum + i.quantity, 0);
 
-  const mrpTotal = items.reduce((sum, item) => {
+  const mrpTotal = items.reduce((sum: number, item: CartItem) => {
     const regularPrice = item.regular_price;
     const originalPrice = regularPrice ? parseFloat(regularPrice) : parseFloat(item.price);
     return sum + originalPrice * item.quantity;
@@ -73,7 +97,7 @@ export default function CartPage() {
                   </h2>
                 </div>
                 <div className="divide-y divide-gray-200">
-                  {items.map((item) => {
+                  {items.map((item: CartItem) => {
                     // Use unique key - variation_id if exists, else id
                     const itemKey = item.variation_id || item.id;
                     const itemRegularPrice = item.regular_price;
@@ -103,7 +127,7 @@ export default function CartPage() {
                               {/* Show variation attributes if exists */}
                               {item.selectedAttributes && Object.keys(item.selectedAttributes).length > 0 && (
                                 <div className="mt-1">
-                                  {Object.entries(item.selectedAttributes).map(([key, value]) => (
+                                  {Object.entries(item.selectedAttributes).map(([key, value]: [string, string]) => (
                                     <span key={key} className="text-xs text-gray-500 mr-2">
                                       {key}: {value}
                                     </span>
@@ -112,7 +136,7 @@ export default function CartPage() {
                               )}
                               
                               <div className="flex items-center gap-1 mt-2">
-                                {[...Array(5)].map((_, i) => (
+                                {[...Array(5)].map((_: undefined, i: number) => (
                                   <Star key={i} className="w-3 h-3 text-gray-900 fill-gray-900" />
                                 ))}
                                 <span className="text-xs text-gray-500 ml-1 font-light">4.8</span>
@@ -125,7 +149,7 @@ export default function CartPage() {
                                 <div className="text-base font-light text-gray-900">
                                   ₹{parseFloat(item.price).toLocaleString()}
                                 </div>
-                                {hasDiscount && (
+                                {hasDiscount && itemRegularPrice && (
                                   <div className="flex items-center gap-2">
                                     <span className="text-xs text-gray-500 line-through font-light">
                                       ₹{parseFloat(itemRegularPrice).toLocaleString()}

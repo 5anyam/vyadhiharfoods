@@ -176,11 +176,17 @@ export default function ProductClient({
   }
 
   const handleAddToCart = async () => {
+    console.log('🛒 Add to Cart clicked!');
+    console.log('Product:', product);
+    console.log('Current Variation:', currentVariation);
+    console.log('Quantity:', quantity);
+    
     if (product.type === 'variable' && !currentVariation) {
+      console.log('❌ Variation not selected');
       toast({ title: 'Select Options', description: 'Please select all options before adding to cart.', variant: 'destructive' })
       return
     }
-
+  
     setIsAddingToCart(true)
     try {
       const itemToAdd = {
@@ -189,11 +195,16 @@ export default function ProductClient({
         variation_id: currentVariation ? currentVariation.id : undefined,
         name: product.name,
         price: salePrice.toString(),
+        regular_price: product.regular_price,
         images: (currentVariation?.image ? [currentVariation.image] : product.images) || [],
-        selectedAttributes: currentVariation ? selectedAttributes : undefined
+        selectedAttributes: currentVariation ? selectedAttributes : undefined,
+        quantity: 1 // Add quantity property
       }
-
+  
+      console.log('📦 Item to add:', itemToAdd);
+  
       for (let i = 0; i < quantity; i++) {
+        console.log(`Adding item ${i + 1} of ${quantity}`);
         addToCart(itemToAdd)
       }
       
@@ -202,25 +213,35 @@ export default function ProductClient({
         name: itemToAdd.name, 
         price: salePrice 
       }, quantity)
-
+  
+      console.log('✅ Successfully added to cart');
+  
       toast({
         title: 'Added to Cart',
         description: `${quantity} x ${product.name} added to your cart.`,
       })
     } catch (error) {
-      console.error('Add to cart failed:', error)
+      console.error('❌ Add to cart failed:', error)
       toast({ title: 'Error', description: 'Failed to add item to cart', variant: 'destructive' })
     } finally {
-      setTimeout(() => setIsAddingToCart(false), 1000)
+      setTimeout(() => {
+        console.log('🔄 Resetting button state');
+        setIsAddingToCart(false)
+      }, 1000)
     }
   }
-
+  
   const handleBuyNow = async () => {
+    console.log('💳 Buy Now clicked!');
+    console.log('Product:', product);
+    console.log('Current Variation:', currentVariation);
+    
     if (product.type === 'variable' && !currentVariation) {
+      console.log('❌ Variation not selected for Buy Now');
       toast({ title: 'Select Options', description: 'Please select all options.', variant: 'destructive' })
       return
     }
-
+  
     setIsBuyingNow(true)
     try {
       const itemToAdd = {
@@ -229,25 +250,32 @@ export default function ProductClient({
         variation_id: currentVariation ? currentVariation.id : undefined,
         name: product.name,
         price: salePrice.toString(),
+        regular_price: product.regular_price,
         images: (currentVariation?.image ? [currentVariation.image] : product.images) || [],
-        selectedAttributes: currentVariation ? selectedAttributes : undefined
+        selectedAttributes: currentVariation ? selectedAttributes : undefined,
+        quantity: 1
       }
-
+  
+      console.log('📦 Item for Buy Now:', itemToAdd);
+  
       for (let i = 0; i < quantity; i++) {
+        console.log(`Adding item ${i + 1} of ${quantity} for checkout`);
         addToCart(itemToAdd)
       }
-
+  
       trackAddToCart({ id: itemToAdd.id, name: itemToAdd.name, price: salePrice }, quantity)
       const cartItems = [{ id: itemToAdd.id, name: itemToAdd.name, price: salePrice, quantity }]
       const total = salePrice * quantity
       trackInitiateCheckout(cartItems, total)
+      
+      console.log('✅ Redirecting to checkout...');
       
       setTimeout(() => {
         router.push('/checkout')
         setIsBuyingNow(false)
       }, 800)
     } catch (error) {
-      console.error('Buy now failed:', error)
+      console.error('❌ Buy now failed:', error)
       toast({ title: 'Error', description: 'Failed to process buy now', variant: 'destructive' })
       setIsBuyingNow(false)
     }
