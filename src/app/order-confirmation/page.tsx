@@ -162,8 +162,8 @@ function OrderConfirmationContent() {
           <div className="space-y-2 text-sm">
             <p className="text-gray-700">
               <span className="font-semibold">WhatsApp:</span>{" "}
-              <a href="https://wa.me/919876543210" className="text-[#D4A574] hover:underline">
-                +91 98765 43210
+              <a href="https://wa.me/919217207717" className="text-[#D4A574] hover:underline">
+                +91 92172 07717
               </a>
             </p>
             <p className="text-gray-700">
