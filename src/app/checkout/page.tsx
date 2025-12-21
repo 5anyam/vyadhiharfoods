@@ -3,12 +3,12 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "../../../lib/cart";
-import { useAuth } from "../../../lib/auth-context"; // ← ADDED
+import { useAuth } from "../../../lib/auth-context";
 import { toast } from "../../../hooks/use-toast";
 import { useFacebookPixel } from "../../../hooks/useFacebookPixel";
 import type { CartItem } from "../../../lib/facebook-pixel";
 import Script from "next/script";
-import { Truck, CreditCard, Banknote, Shield, CheckCircle2, User as UserIcon, LogIn } from "lucide-react"; // ← ADDED UserIcon, LogIn
+import { Truck, CreditCard, Banknote, Shield, CheckCircle2, User as UserIcon, LogIn } from "lucide-react";
 
 const WOOCOMMERCE_CONFIG = {
   BASE_URL: 'https://cms.vyadhiharfoods.com',
@@ -89,12 +89,10 @@ declare global {
   }
 }
 
-// ✅ UPDATED - Now links orders to logged-in users
 const createWooCommerceOrder = async (orderData: Record<string, unknown>, userEmail?: string): Promise<WooCommerceOrder> => {
   const apiUrl = `${WOOCOMMERCE_CONFIG.BASE_URL}/wp-json/wc/v3/orders`;
   const auth = btoa(`${WOOCOMMERCE_CONFIG.CONSUMER_KEY}:${WOOCOMMERCE_CONFIG.CONSUMER_SECRET}`);
 
-  // Link order to logged-in user
   if (userEmail) {
     try {
       const customerResponse = await fetch(
@@ -182,7 +180,7 @@ export default function Checkout(): React.ReactElement {
   const { items, clear } = useCart();
   const router = useRouter();
   const { trackInitiateCheckout, trackAddPaymentInfo, trackPurchase } = useFacebookPixel();
-  const { user } = useAuth(); // ← ADDED
+  const { user } = useAuth();
 
   const total = items.reduce((sum, i) => sum + parseFloat(i.price) * i.quantity, 0);
   const deliveryCharges = total >= 500 ? 0 : 50;
@@ -194,8 +192,12 @@ export default function Checkout(): React.ReactElement {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState<boolean>(false);
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
 
+  // ✅ ADDED - COD Charges
+  const codCharges = paymentMethod === "cod" ? 50 : 0;
+
   const subtotalAfterCoupon = total - couponDiscount;
-  const finalTotal = subtotalAfterCoupon + deliveryCharges;
+  // ✅ UPDATED - Include COD charges in final total
+  const finalTotal = subtotalAfterCoupon + deliveryCharges + codCharges;
 
   const [form, setForm] = useState<FormData>({
     name: "", email: "", phone: "", whatsapp: "", address: "", 
@@ -206,7 +208,6 @@ export default function Checkout(): React.ReactElement {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [razorpayLoaded, setRazorpayLoaded] = useState<boolean>(false);
 
-  // ✅ ADDED - Pre-fill form if user is logged in
   useEffect(() => {
     if (user) {
       setForm(prev => ({
@@ -301,7 +302,7 @@ export default function Checkout(): React.ReactElement {
 
     if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
-    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
       newErrors.email = "Please enter a valid email";
     }
     if (!form.phone.trim()) newErrors.phone = "Phone number is required";
@@ -489,6 +490,12 @@ export default function Checkout(): React.ReactElement {
           method_title: 'Standard Delivery (4-6 Days)',
           total: deliveryCharges.toString(),
         }] : [],
+        // ✅ ADDED - COD charges as fee line
+        fee_lines: codCharges > 0 ? [{
+          name: 'COD Charges',
+          total: codCharges.toString(),
+          tax_status: 'none',
+        }] : [],
         coupon_lines: appliedCoupon ? [{
           code: appliedCoupon.toLowerCase(),
           discount: couponDiscount.toString(),
@@ -503,6 +510,8 @@ export default function Checkout(): React.ReactElement {
           { key: 'full_address', value: fullAddress },
           { key: 'original_subtotal', value: total.toString() },
           { key: 'delivery_charges', value: deliveryCharges.toString() },
+          // ✅ ADDED - COD charges in metadata
+          { key: 'cod_charges', value: codCharges.toString() },
           { key: 'final_total', value: finalTotal.toString() },
           { key: 'payment_type', value: paymentMethod },
           ...(appliedCoupon ? [
@@ -512,7 +521,6 @@ export default function Checkout(): React.ReactElement {
         ],
       };
   
-      // ✅ UPDATED - Pass user email to link order
       wooOrder = await createWooCommerceOrder(orderData, user?.email);
   
       if (paymentMethod === "cod") {
@@ -644,7 +652,7 @@ export default function Checkout(): React.ReactElement {
             <p className="text-gray-600">Complete your order in a few simple steps</p>
           </div>
 
-          {/* ✅ ADDED - User Status Banner */}
+          {/* User Status Banner */}
           {user ? (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 mb-6">
               <div className="flex items-center justify-between gap-3">
@@ -718,6 +726,41 @@ export default function Checkout(): React.ReactElement {
                       <span className="font-semibold text-sm text-[#5D4E37]">₹{(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
+                  
+                  {/* ✅ ADDED - Charges breakdown in mobile view */}
+                  <div className="space-y-2 pt-3 border-t border-gray-200">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Subtotal</span>
+                      <span className="font-medium text-gray-900">₹{total.toFixed(2)}</span>
+                    </div>
+
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-green-600">Coupon Discount</span>
+                        <span className="font-medium text-green-600">-₹{couponDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Delivery Charges</span>
+                      <span className="font-medium text-gray-900">
+                        {deliveryCharges === 0 ? (
+                          <span className="text-green-600">FREE</span>
+                        ) : (
+                          `₹${deliveryCharges.toFixed(2)}`
+                        )}
+                      </span>
+                    </div>
+
+                    {/* ✅ ADDED - COD Charges Line (Mobile) */}
+                    {paymentMethod === "cod" && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">COD Charges</span>
+                        <span className="font-medium text-gray-900">₹{codCharges.toFixed(2)}</span>
+                      </div>
+                    )}
+                  </div>
+                  
                   <div className="flex justify-between items-center pt-3 border-t-2 border-[#D4A574]/30">
                     <span className="text-base font-bold text-[#5D4E37]">Total</span>
                     <span className="text-lg font-bold text-[#5D4E37]">₹{finalTotal.toFixed(2)}</span>
@@ -758,7 +801,7 @@ export default function Checkout(): React.ReactElement {
                     <p className={`text-sm font-semibold ${paymentMethod === "cod" ? "text-[#5D4E37]" : "text-gray-600"}`}>
                       Cash on Delivery
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">Pay when you receive</p>
+                    <p className="text-xs text-gray-500 mt-1">Pay when you receive + ₹50</p>
                   </button>
                 </div>
               </div>
@@ -1094,6 +1137,14 @@ export default function Checkout(): React.ReactElement {
                         )}
                       </span>
                     </div>
+
+                    {/* ✅ ADDED - COD Charges Line (Desktop) */}
+                    {paymentMethod === "cod" && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">COD Charges</span>
+                        <span className="font-medium text-gray-900">₹{codCharges.toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-between items-center pt-4 border-t-2 border-[#D4A574]/30">
