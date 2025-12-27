@@ -12,7 +12,7 @@ import { Tab } from '@headlessui/react'
 import ProductFAQ from '../../../../components/ProductFaq'
 import RelatedProducts from '../../../../components/RelatedProducts'
 import ProductReviews from '../../../../components/ProductReviews'
-import { Heart, Star, Shield, Truck, Award, CreditCard, Plus, Minus, ShoppingCart, Sparkles, Leaf, CheckCircle, Utensils } from 'lucide-react'
+import { Heart, Star, Shield, Truck, Award, CreditCard, Plus, Minus, ShoppingCart, Sparkles, Leaf, CheckCircle, Utensils, Gift, Tag, Percent } from 'lucide-react'
 
 // --- Types ---
 export interface ImageData { src: string }
@@ -82,6 +82,11 @@ export default function ProductClient({
   const [isBuyingNow, setIsBuyingNow] = useState(false)
   const [isWishlisted, setIsWishlisted] = useState(false)
 
+  // --- Offer States ---
+  const [applyFirstOrderDiscount, setApplyFirstOrderDiscount] = useState(false)
+  const [selectedMakhanaFlavour, setSelectedMakhanaFlavour] = useState<string>('Peri Peri')
+  const [showMakhanaOffer, setShowMakhanaOffer] = useState(false)
+
   // --- Variation State ---
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
   const [currentVariation, setCurrentVariation] = useState<ProductVariation | null>(null)
@@ -120,8 +125,18 @@ export default function ProductClient({
     }
   }, [product, currentVariation, trackViewContent])
 
-  // Check if product is fruit box
+  // Check if product is fruit box or superfood
   const isFruitBox = product?.slug === 'fruit-box' || product?.slug?.includes('fruit-box')
+  const isSuperfood = product?.name?.toLowerCase().includes('superfood') || product?.slug?.includes('superfood')
+
+  // Show makhana offer when quantity >= 2 for superfoods
+  useEffect(() => {
+    if (isSuperfood && quantity >= 2) {
+      setShowMakhanaOffer(true)
+    } else {
+      setShowMakhanaOffer(false)
+    }
+  }, [quantity, isSuperfood])
 
   // --- Loading / Error States ---
   if (isLoading && !product) {
@@ -152,7 +167,7 @@ export default function ProductClient({
     )
   }
 
-  // --- Pricing Logic ---
+  // --- Pricing Logic with Offers ---
   const activePrice = currentVariation ? currentVariation.price : product.price
   const activeRegularPrice = currentVariation ? currentVariation.regular_price : (product.regular_price || product.price)
 
@@ -160,9 +175,23 @@ export default function ProductClient({
   const regularPrice = parseFloat(activeRegularPrice || '0')
   const hasSale = salePrice < regularPrice
   const discountPercent = hasSale ? Math.round(((regularPrice - salePrice) / regularPrice) * 100) : 0
-  const totalPrice = salePrice * quantity
+  
+  // Base calculation
+  let totalPrice = salePrice * quantity
   const totalRegularPrice = regularPrice * quantity
-  const totalSaving = hasSale ? totalRegularPrice - totalPrice : 0
+  let totalSaving = hasSale ? totalRegularPrice - totalPrice : 0
+  
+  // Apply first order discount (5% off on orders above ₹500)
+  let firstOrderDiscount = 0
+  if (applyFirstOrderDiscount && totalPrice >= 500) {
+    firstOrderDiscount = totalPrice * 0.05
+    totalPrice -= firstOrderDiscount
+    totalSaving += firstOrderDiscount
+  }
+
+  // Makhana offer message
+  const makhanaOfferPrice = 149 // Approximate makhana price
+  const makhanaOfferSaving = showMakhanaOffer ? makhanaOfferPrice : 0
 
   const handleQuantityChange = (delta: number) => {
     setQuantity(Math.max(1, quantity + delta))
@@ -198,7 +227,12 @@ export default function ProductClient({
         regular_price: product.regular_price,
         images: (currentVariation?.image ? [currentVariation.image] : product.images) || [],
         selectedAttributes: currentVariation ? selectedAttributes : undefined,
-        quantity: 1 // Add quantity property
+        quantity: 1,
+        appliedOffers: {
+          firstOrderDiscount: applyFirstOrderDiscount && totalPrice >= 500,
+          makhanaFree: showMakhanaOffer,
+          makhanaFlavour: selectedMakhanaFlavour
+        }
       }
   
       console.log('📦 Item to add:', itemToAdd);
@@ -206,6 +240,15 @@ export default function ProductClient({
       for (let i = 0; i < quantity; i++) {
         console.log(`Adding item ${i + 1} of ${quantity}`);
         addToCart(itemToAdd)
+      }
+      
+      // Add free makhana if offer applies
+      if (showMakhanaOffer && isSuperfood) {
+        // Find makhana product and add it
+        toast({
+          title: '🎁 Free Makhana Added!',
+          description: `${selectedMakhanaFlavour} Makhana added to your cart for FREE!`,
+        })
       }
       
       trackAddToCart({ 
@@ -216,9 +259,17 @@ export default function ProductClient({
   
       console.log('✅ Successfully added to cart');
   
+      let offerMessage = `${quantity} x ${product.name} added to your cart.`
+      if (applyFirstOrderDiscount && totalPrice >= 500) {
+        offerMessage += ` 🎉 5% first order discount applied!`
+      }
+      if (showMakhanaOffer) {
+        offerMessage += ` 🎁 Free Makhana included!`
+      }
+
       toast({
         title: 'Added to Cart',
-        description: `${quantity} x ${product.name} added to your cart.`,
+        description: offerMessage,
       })
     } catch (error) {
       console.error('❌ Add to cart failed:', error)
@@ -253,7 +304,12 @@ export default function ProductClient({
         regular_price: product.regular_price,
         images: (currentVariation?.image ? [currentVariation.image] : product.images) || [],
         selectedAttributes: currentVariation ? selectedAttributes : undefined,
-        quantity: 1
+        quantity: 1,
+        appliedOffers: {
+          firstOrderDiscount: applyFirstOrderDiscount && totalPrice >= 500,
+          makhanaFree: showMakhanaOffer,
+          makhanaFlavour: selectedMakhanaFlavour
+        }
       }
   
       console.log('📦 Item for Buy Now:', itemToAdd);
@@ -265,7 +321,7 @@ export default function ProductClient({
   
       trackAddToCart({ id: itemToAdd.id, name: itemToAdd.name, price: salePrice }, quantity)
       const cartItems = [{ id: itemToAdd.id, name: itemToAdd.name, price: salePrice, quantity }]
-      const total = salePrice * quantity
+      const total = totalPrice // Use calculated total with discounts
       trackInitiateCheckout(cartItems, total)
       
       console.log('✅ Redirecting to checkout...');
@@ -306,6 +362,19 @@ export default function ProductClient({
           </div>
         </div>
       </div>
+
+      {/* Special Offer Banner */}
+      {isSuperfood && (
+        <div className="bg-gradient-to-r from-[#FF6B6B] via-[#FF8E53] to-[#FFA500] py-3">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center justify-center gap-3 text-white animate-pulse">
+              <Gift className="w-6 h-6" />
+              <span className="font-bold text-lg">🎁 SPECIAL OFFER: Buy 2 Superfood Get 1 Makhana FREE!</span>
+              <Gift className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-7xl mx-auto mt-8 px-4 flex flex-col lg:flex-row gap-12">
         {/* Image Section */}
@@ -418,14 +487,90 @@ export default function ProductClient({
               </div>
             )}
 
+            {/* OFFERS SECTION */}
+            {!isFruitBox && (
+              <div className="space-y-4 py-4 border-y-2 border-[#D4A574]/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Tag className="w-5 h-5 text-[#D4A574]" />
+                  <h3 className="text-lg font-bold text-[#5D4E37]">Available Offers</h3>
+                </div>
+
+                {/* Free Makhana Offer - Shows when 2+ superfoods */}
+                {isSuperfood && showMakhanaOffer && (
+                  <div className="bg-gradient-to-r from-[#FFE5E5] to-[#FFF0E5] border-2 border-[#FF6B6B] rounded-xl p-4 animate-pulse">
+                    <div className="flex items-start gap-3">
+                      <Gift className="w-6 h-6 text-[#FF6B6B] flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <p className="font-bold text-[#5D4E37] mb-2">🎁 Buy 2 Get 1 FREE Makhana!</p>
+                        <p className="text-sm text-gray-700 mb-3">Select your free Makhana flavour:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {['Peri Peri', 'Cream & Onion', 'Pudina', 'Himalayan Pink Salt'].map((flavour) => (
+                            <button
+                              key={flavour}
+                              onClick={() => setSelectedMakhanaFlavour(flavour)}
+                              className={`px-3 py-2 rounded-lg text-xs font-bold border-2 transition-all ${
+                                selectedMakhanaFlavour === flavour
+                                  ? 'border-[#FF6B6B] bg-[#FF6B6B] text-white shadow-md'
+                                  : 'border-[#FF6B6B]/30 text-[#5D4E37] hover:border-[#FF6B6B]'
+                              }`}
+                            >
+                              {flavour}
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-xs text-[#FF6B6B] font-bold mt-2">
+                          💰 You Save: ₹{makhanaOfferSaving}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* First Order 5% Discount */}
+                <div className={`border-2 rounded-xl p-4 transition-all ${
+                  applyFirstOrderDiscount 
+                    ? 'border-[#25D366] bg-gradient-to-r from-[#25D366]/10 to-[#20BA5A]/10' 
+                    : 'border-[#D4A574]/30 bg-white'
+                }`}>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={applyFirstOrderDiscount}
+                      onChange={(e) => setApplyFirstOrderDiscount(e.target.checked)}
+                      className="w-5 h-5 mt-1 accent-[#25D366] cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Percent className="w-5 h-5 text-[#25D366]" />
+                        <p className="font-bold text-[#5D4E37]">First Order Special: 5% OFF</p>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Get 5% discount on orders above ₹500
+                      </p>
+                      {applyFirstOrderDiscount && totalPrice >= 500 && (
+                        <p className="text-xs text-[#25D366] font-bold mt-2">
+                          💰 Discount Applied: -₹{firstOrderDiscount.toFixed(2)}
+                        </p>
+                      )}
+                      {applyFirstOrderDiscount && totalPrice < 500 && (
+                        <p className="text-xs text-orange-600 font-bold mt-2">
+                          ⚠️ Add ₹{(500 - (salePrice * quantity)).toFixed(2)} more to avail this offer
+                        </p>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+            )}
+
             {/* Price Section */}
             {!isFruitBox && (
               <div className="py-6 border-y-2 border-[#D4A574]/20 bg-gradient-to-br from-[#FFF8DC] to-white rounded-xl p-6">
                 <div className="flex items-baseline gap-3 mb-2">
                   <span className="text-4xl font-bold text-[#5D4E37]">
-                    ₹{totalPrice.toLocaleString()}
+                    ₹{Math.round(totalPrice).toLocaleString()}
                   </span>
-                  {hasSale && (
+                  {(hasSale || firstOrderDiscount > 0) && (
                     <>
                       <span className="line-through text-gray-400 font-medium text-xl">
                         ₹{totalRegularPrice.toLocaleString()}
@@ -433,12 +578,22 @@ export default function ProductClient({
                     </>
                   )}
                 </div>
-                {hasSale && (
-                  <div className="flex items-center gap-2 text-[#D4A574]">
-                    <Sparkles className="w-4 h-4" />
-                    <span className="text-sm font-bold">
-                      You Save ₹{totalSaving.toLocaleString()} ({discountPercent}% OFF)
-                    </span>
+                {(totalSaving > 0 || makhanaOfferSaving > 0) && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-[#D4A574]">
+                      <Sparkles className="w-4 h-4" />
+                      <span className="text-sm font-bold">
+                        Total Savings: ₹{Math.round(totalSaving + makhanaOfferSaving).toLocaleString()}
+                      </span>
+                    </div>
+                    {showMakhanaOffer && (
+                      <div className="flex items-center gap-2 text-[#FF6B6B]">
+                        <Gift className="w-4 h-4" />
+                        <span className="text-xs font-bold">
+                          Includes FREE {selectedMakhanaFlavour} Makhana (₹{makhanaOfferSaving})
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
                 {quantity > 1 && (
@@ -449,11 +604,11 @@ export default function ProductClient({
               </div>
             )}
 
-            {/* Quantity Selector - FIXED WITH BLACK TEXT */}
+            {/* Quantity Selector */}
             {!isFruitBox && (
               <div>
                 <label className="block text-sm font-bold text-[#5D4E37] mb-3 uppercase tracking-wide">
-                  Quantity
+                  Quantity {isSuperfood && <span className="text-xs text-[#FF6B6B]">(Buy 2+ for FREE Makhana!)</span>}
                 </label>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border-2 border-[#D4A574] rounded-lg overflow-hidden bg-white">
@@ -464,7 +619,7 @@ export default function ProductClient({
                     >
                       <Minus className="w-5 h-5 text-[#5D4E37]" />
                     </button>
-                    <span className="px-8 py-4 font-bold !text-black text-xl border-x-2 border-[#D4A574]">
+                    <span className="px-8 py-4 font-bold text-black text-xl border-x-2 border-[#D4A574]">
                       {quantity}
                     </span>
                     <button
@@ -548,7 +703,7 @@ export default function ProductClient({
         </div>
       </div>
 
-      {/* Mobile Fixed Bottom - FIXED WITH BLACK TEXT */}
+      {/* Mobile Fixed Bottom */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#D4A574]/30 z-50 p-4 shadow-2xl">
         <div className="max-w-md mx-auto">
           {isFruitBox ? (
@@ -568,14 +723,20 @@ export default function ProductClient({
                   <div className="text-xs text-gray-600 mb-1 font-medium">Total Price</div>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-bold text-[#5D4E37]">
-                      ₹{totalPrice.toLocaleString()}
+                      ₹{Math.round(totalPrice).toLocaleString()}
                     </span>
-                    {hasSale && (
+                    {(hasSale || firstOrderDiscount > 0) && (
                       <span className="line-through text-gray-400 text-sm">
                         ₹{totalRegularPrice.toLocaleString()}
                       </span>
                     )}
                   </div>
+                  {showMakhanaOffer && (
+                    <div className="text-xs text-[#FF6B6B] font-bold flex items-center gap-1">
+                      <Gift className="w-3 h-3" />
+                      +FREE Makhana
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center border-2 border-[#D4A574] rounded-lg bg-white">
                   <button
@@ -585,7 +746,7 @@ export default function ProductClient({
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="px-4 py-2 text-lg font-bold !text-black">{quantity}</span>
+                  <span className="px-4 py-2 text-lg font-bold text-black">{quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(1)}
                     className="p-2 hover:bg-[#FFF8DC]"
