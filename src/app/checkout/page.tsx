@@ -8,7 +8,7 @@ import { toast } from "../../../hooks/use-toast";
 import { useFacebookPixel } from "../../../hooks/useFacebookPixel";
 import type { CartItem } from "../../../lib/facebook-pixel";
 import Script from "next/script";
-import { Truck, CreditCard, Banknote, Shield, CheckCircle2, User as UserIcon, LogIn } from "lucide-react";
+import { Truck, CreditCard, Banknote, Shield, CheckCircle2, User as UserIcon, LogIn, Gift } from "lucide-react";
 
 const WOOCOMMERCE_CONFIG = {
   BASE_URL: 'https://cms.vyadhiharfoods.com',
@@ -185,6 +185,18 @@ export default function Checkout(): React.ReactElement {
   const total = items.reduce((sum, i) => sum + parseFloat(i.price) * i.quantity, 0);
   const deliveryCharges = total >= 500 ? 0 : 50;
 
+  // ✅ Makhana Offer States
+  const [selectedMakhanaFlavour, setSelectedMakhanaFlavour] = useState<string>('Peri Peri');
+  const makhanaFlavours = ['Peri Peri', 'Cream & Onion', 'Pudina', 'Himalayan Pink Salt'];
+  
+  // Check if cart has 2+ superfoods
+  const superfoodCount = items.reduce((count, item) => {
+    const isSuperfood = item.name?.toLowerCase().includes('superfood') || false;
+    return count + (isSuperfood ? item.quantity : 0);
+  }, 0);
+  const hasMakhanaOffer = superfoodCount >= 2;
+  const makhanaPrice = 149;
+
   const [couponCode, setCouponCode] = useState<string>("");
   const [appliedCoupon, setAppliedCoupon] = useState<string>("");
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
@@ -192,11 +204,9 @@ export default function Checkout(): React.ReactElement {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState<boolean>(false);
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
 
-  // ✅ ADDED - COD Charges
   const codCharges = paymentMethod === "cod" ? 50 : 0;
 
   const subtotalAfterCoupon = total - couponDiscount;
-  // ✅ UPDATED - Include COD charges in final total
   const finalTotal = subtotalAfterCoupon + deliveryCharges + codCharges;
 
   const [form, setForm] = useState<FormData>({
@@ -368,9 +378,13 @@ export default function Checkout(): React.ReactElement {
 
       clear();
 
+      const successMsg = hasMakhanaOffer 
+        ? `Order #${wooOrder.id} confirmed. FREE ${selectedMakhanaFlavour} Makhana included! You'll receive updates via WhatsApp.`
+        : `Order #${wooOrder.id} confirmed. You'll receive updates via WhatsApp.`;
+
       toast({
         title: "Payment Successful",
-        description: `Order #${wooOrder.id} confirmed. You'll receive updates via WhatsApp.`,
+        description: successMsg,
       });
 
       router.push(`/order-confirmation?orderId=${response.razorpay_payment_id}&wcOrderId=${wooOrder.id}`);
@@ -454,6 +468,22 @@ export default function Checkout(): React.ReactElement {
       setStep("processing");
   
       const fullAddress = `${form.address}, ${form.city}, ${form.state} - ${form.pincode}`;
+      
+      // ✅ Build customer note with makhana offer
+      let customerNote = form.notes;
+      if (form.notes) customerNote += '\n\n';
+      customerNote += `WhatsApp: ${form.whatsapp}\n`;
+      customerNote += `Full Address: ${fullAddress}\n`;
+      customerNote += `Payment Method: ${paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment"}`;
+      
+      if (appliedCoupon) {
+        customerNote += `\nCoupon Applied: ${appliedCoupon} (₹${couponDiscount} discount)`;
+      }
+      
+      // ✅ ADD MAKHANA OFFER IN NOTES
+      if (hasMakhanaOffer) {
+        customerNote += `\n\n🎁 FREE MAKHANA OFFER: ${selectedMakhanaFlavour} Makhana (Worth ₹${makhanaPrice})`;
+      }
   
       const orderData = {
         payment_method: paymentMethod === "cod" ? 'cod' : 'razorpay',
@@ -490,7 +520,6 @@ export default function Checkout(): React.ReactElement {
           method_title: 'Standard Delivery (4-6 Days)',
           total: deliveryCharges.toString(),
         }] : [],
-        // ✅ ADDED - COD charges as fee line
         fee_lines: codCharges > 0 ? [{
           name: 'COD Charges',
           total: codCharges.toString(),
@@ -500,20 +529,21 @@ export default function Checkout(): React.ReactElement {
           code: appliedCoupon.toLowerCase(),
           discount: couponDiscount.toString(),
         }] : [],
-        customer_note: form.notes + (form.notes ? '\n\n' : '') + 
-          `WhatsApp: ${form.whatsapp}\n` +
-          `Full Address: ${fullAddress}\n` +
-          `Payment Method: ${paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment"}` +
-          (appliedCoupon ? `\nCoupon Applied: ${appliedCoupon} (₹${couponDiscount} discount)` : ''),
+        customer_note: customerNote,
         meta_data: [
           { key: 'whatsapp_number', value: form.whatsapp },
           { key: 'full_address', value: fullAddress },
           { key: 'original_subtotal', value: total.toString() },
           { key: 'delivery_charges', value: deliveryCharges.toString() },
-          // ✅ ADDED - COD charges in metadata
           { key: 'cod_charges', value: codCharges.toString() },
           { key: 'final_total', value: finalTotal.toString() },
           { key: 'payment_type', value: paymentMethod },
+          // ✅ ADD MAKHANA OFFER METADATA
+          ...(hasMakhanaOffer ? [
+            { key: 'free_makhana_offer', value: 'yes' },
+            { key: 'makhana_flavour', value: selectedMakhanaFlavour },
+            { key: 'makhana_value', value: makhanaPrice.toString() }
+          ] : []),
           ...(appliedCoupon ? [
             { key: 'coupon_code', value: appliedCoupon },
             { key: 'coupon_discount', value: couponDiscount.toString() }
@@ -533,10 +563,14 @@ export default function Checkout(): React.ReactElement {
         trackPurchase(orderItems, finalTotal, `COD-${wooOrder.id}`);
   
         clear();
+
+        const successMsg = hasMakhanaOffer
+          ? `Order #${wooOrder.id} confirmed. Pay on delivery. FREE ${selectedMakhanaFlavour} Makhana included! You'll receive updates via WhatsApp.`
+          : `Order #${wooOrder.id} confirmed. Pay on delivery. You'll receive updates via WhatsApp.`;
   
         toast({
           title: "Order Placed Successfully",
-          description: `Order #${wooOrder.id} confirmed. Pay on delivery. You'll receive updates via WhatsApp.`,
+          description: successMsg,
         });
   
         router.push(`/order-confirmation?orderId=COD-${wooOrder.id}&wcOrderId=${wooOrder.id}&method=cod`);
@@ -652,6 +686,17 @@ export default function Checkout(): React.ReactElement {
             <p className="text-gray-600">Complete your order in a few simple steps</p>
           </div>
 
+          {/* ✅ MAKHANA OFFER BANNER */}
+          {hasMakhanaOffer && (
+            <div className="bg-gradient-to-r from-[#FF6B6B] via-[#FF8E53] to-[#FFA500] border-2 border-[#FF6B6B] rounded-2xl p-4 mb-6 animate-pulse">
+              <div className="flex items-center justify-center gap-3 text-white">
+                <Gift className="w-6 h-6" />
+                <p className="font-bold text-lg">🎁 FREE {selectedMakhanaFlavour} Makhana Added! (Worth ₹{makhanaPrice})</p>
+                <Gift className="w-6 h-6" />
+              </div>
+            </div>
+          )}
+
           {/* User Status Banner */}
           {user ? (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 mb-6">
@@ -727,7 +772,17 @@ export default function Checkout(): React.ReactElement {
                     </div>
                   ))}
                   
-                  {/* ✅ ADDED - Charges breakdown in mobile view */}
+                  {/* ✅ SHOW FREE MAKHANA IN MOBILE SUMMARY */}
+                  {hasMakhanaOffer && (
+                    <div className="flex justify-between items-center py-2 border-b border-green-200 bg-green-50 -mx-6 px-6">
+                      <div className="flex items-center gap-2">
+                        <Gift className="w-4 h-4 text-green-600" />
+                        <span className="font-medium text-sm text-green-700">FREE {selectedMakhanaFlavour} Makhana</span>
+                      </div>
+                      <span className="font-semibold text-sm text-green-600">₹0</span>
+                    </div>
+                  )}
+                  
                   <div className="space-y-2 pt-3 border-t border-gray-200">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Subtotal</span>
@@ -738,6 +793,13 @@ export default function Checkout(): React.ReactElement {
                       <div className="flex justify-between text-sm">
                         <span className="text-green-600">Coupon Discount</span>
                         <span className="font-medium text-green-600">-₹{couponDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+
+                    {hasMakhanaOffer && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-green-600">Free Makhana Offer</span>
+                        <span className="font-medium text-green-600">-₹{makhanaPrice}</span>
                       </div>
                     )}
 
@@ -752,7 +814,6 @@ export default function Checkout(): React.ReactElement {
                       </span>
                     </div>
 
-                    {/* ✅ ADDED - COD Charges Line (Mobile) */}
                     {paymentMethod === "cod" && (
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">COD Charges</span>
@@ -765,8 +826,46 @@ export default function Checkout(): React.ReactElement {
                     <span className="text-base font-bold text-[#5D4E37]">Total</span>
                     <span className="text-lg font-bold text-[#5D4E37]">₹{finalTotal.toFixed(2)}</span>
                   </div>
+
+                  {hasMakhanaOffer && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-2 mt-3">
+                      <p className="text-xs text-green-700 text-center font-medium">
+                        🎉 Total Savings: ₹{makhanaPrice}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* ✅ MAKHANA FLAVOUR SELECTOR */}
+              {hasMakhanaOffer && (
+                <div className="bg-gradient-to-r from-[#FFE5E5] to-[#FFF0E5] border-2 border-[#FF6B6B] rounded-2xl p-6 mb-6 shadow-lg">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Gift className="w-6 h-6 text-[#FF6B6B]" />
+                    <h2 className="text-lg font-bold text-[#5D4E37]">Select Your FREE Makhana Flavour</h2>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">Choose your complimentary Makhana flavour (Worth ₹{makhanaPrice})</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {makhanaFlavours.map((flavour) => (
+                      <button
+                        key={flavour}
+                        type="button"
+                        onClick={() => setSelectedMakhanaFlavour(flavour)}
+                        className={`p-4 rounded-xl border-2 transition-all font-semibold text-sm ${
+                          selectedMakhanaFlavour === flavour
+                            ? "border-[#FF6B6B] bg-[#FF6B6B] text-white shadow-lg scale-105"
+                            : "border-[#FF6B6B]/30 text-[#5D4E37] hover:border-[#FF6B6B] hover:bg-[#FFE5E5]"
+                        }`}
+                      >
+                        {flavour}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[#FF6B6B] font-bold mt-3 text-center">
+                    ✅ Selected: {selectedMakhanaFlavour}
+                  </p>
+                </div>
+              )}
 
               {/* Payment Method Selection */}
               <div className="bg-white border-2 border-[#D4A574]/30 rounded-2xl p-6 mb-6 shadow-lg">
@@ -806,6 +905,7 @@ export default function Checkout(): React.ReactElement {
                 </div>
               </div>
 
+              {/* Rest of the form continues... */}
               {/* Coupon Section */}
               <div className="bg-white border-2 border-[#D4A574]/30 rounded-2xl p-6 mb-6 shadow-lg">
                 <h2 className="text-lg font-bold text-[#5D4E37] mb-4">Have a Coupon?</h2>
@@ -1041,6 +1141,11 @@ export default function Checkout(): React.ReactElement {
                     value={form.notes}
                     onChange={onChange}
                   />
+                  {hasMakhanaOffer && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✅ FREE {selectedMakhanaFlavour} Makhana will be added automatically
+                    </p>
+                  )}
                 </div>
 
                 {/* Submit Button */}
@@ -1112,6 +1217,22 @@ export default function Checkout(): React.ReactElement {
                         </span>
                       </div>
                     ))}
+
+                    {/* ✅ SHOW FREE MAKHANA IN DESKTOP SUMMARY */}
+                    {hasMakhanaOffer && (
+                      <div className="flex justify-between items-start py-2 border-b border-green-200 bg-green-50 -mx-6 px-6">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Gift className="w-4 h-4 text-green-600" />
+                            <p className="font-medium text-sm text-green-700 leading-tight mb-1">FREE {selectedMakhanaFlavour} Makhana</p>
+                          </div>
+                          <p className="text-xs text-green-600">Complimentary offer</p>
+                        </div>
+                        <span className="font-semibold text-sm text-green-600 ml-2 line-through">
+                          ₹{makhanaPrice}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2 py-3 border-t border-gray-200">
@@ -1127,6 +1248,16 @@ export default function Checkout(): React.ReactElement {
                       </div>
                     )}
 
+                    {hasMakhanaOffer && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-green-600 flex items-center gap-1">
+                          <Gift className="w-3 h-3" />
+                          Free Makhana Offer
+                        </span>
+                        <span className="font-medium text-green-600">-₹{makhanaPrice}</span>
+                      </div>
+                    )}
+
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Delivery Charges</span>
                       <span className="font-medium text-gray-900">
@@ -1138,7 +1269,6 @@ export default function Checkout(): React.ReactElement {
                       </span>
                     </div>
 
-                    {/* ✅ ADDED - COD Charges Line (Desktop) */}
                     {paymentMethod === "cod" && (
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">COD Charges</span>
@@ -1152,7 +1282,15 @@ export default function Checkout(): React.ReactElement {
                     <span className="text-2xl font-bold text-[#D4A574]">₹{finalTotal.toFixed(2)}</span>
                   </div>
 
-                  {deliveryCharges === 0 && (
+                  {hasMakhanaOffer && (
+                    <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
+                      <p className="text-xs text-green-700 text-center font-medium">
+                        🎉 You saved ₹{makhanaPrice} with FREE Makhana!
+                      </p>
+                    </div>
+                  )}
+
+                  {deliveryCharges === 0 && !hasMakhanaOffer && (
                     <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
                       <p className="text-xs text-green-700 text-center font-medium">
                         🎉 You have got FREE delivery!
