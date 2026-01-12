@@ -125,7 +125,7 @@ export default function AboutPage() {
               100% Natural & Premium Quality
             </h2>
             <p className="text-base text-gray-700 mb-6 leading-relaxed font-light">
-              At Vyadhihar Foods, we believe that nutrition should be natural, pure, and accessible to everyone. We are committed to providing the finest quality dry fruits and healthy snacks without any compromises on quality or authenticity.
+              At Vyadhihar Foods, we believe that nutrition should be natural, pure and accessible to everyone. We are committed to providing the finest quality dry fruits and healthy snacks without any compromises on quality or authenticity.
             </p>
             <p className="text-base text-gray-700 leading-relaxed font-light">
               Every product is handpicked, lab-tested, and carefully processed to maintain its nutritional value and fresh taste.
