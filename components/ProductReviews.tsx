@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
@@ -26,6 +26,7 @@ interface ApiMetaItem {
   key: string;
   value: unknown;
 }
+
 interface ApiReview {
   id: number;
   date_created?: string;
@@ -48,6 +49,7 @@ const isApiReview = (r: unknown): r is ApiReview =>
   r !== null &&
   typeof (r as Record<string, unknown>).id === 'number';
 
+// ✅ Fixed: was using '\\n' (literal backslash+n) instead of '\n'
 const stripHtml = (html: string): string => {
   if (!html) return '';
   const noP = html.replace(/<\/?p[^>]*>/gi, '\n').replace(/<br\s*\/?>/gi, '\n');
@@ -55,11 +57,13 @@ const stripHtml = (html: string): string => {
   return text.replace(/\n{3,}/g, '\n\n').trim();
 };
 
+const REVIEWS_API = '/api/reviews';
+
 const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName }) => {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [reviews, setReviews]       = useState<Review[]>([]);
+  const [loading, setLoading]       = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showForm, setShowForm]     = useState<boolean>(false);
 
   const [formData, setFormData] = useState<{
     reviewer: string;
@@ -73,16 +77,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
     rating: 0,
   });
 
-  const API_BASE = 'https://cms.edaperfumes.com/wp-json/wc/v3';
-  const CONSUMER_KEY = 'ck_b1a13e4236dd41ec9b8e6a1720a69397ddd12da6';
-  const CONSUMER_SECRET = 'cs_d8439cfabc73ad5b9d82d1d3facea6711f24dfd1';
-
-  useEffect(() => {
-    if (productId) {
-      void loadReviews();
-    }
-  }, [productId]);
-
   const parseImageUrlsFromMeta = (meta?: ApiMetaItem[]): string[] | undefined => {
     if (!Array.isArray(meta)) return undefined;
     const urlsItem = meta.find((m) => isApiMetaItem(m) && m.key === 'amraj_review_image_urls');
@@ -94,16 +88,13 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
     return undefined;
   };
 
-  const loadReviews = async (): Promise<void> => {
+  // ✅ useCallback so it can safely go in useEffect deps
+  const loadReviews = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
 
-      const url =
-        `${API_BASE}/products/reviews?product=${productId}` +
-        `&consumer_key=${CONSUMER_KEY}&consumer_secret=${CONSUMER_SECRET}` +
-        `&per_page=100&status=approved`;
-
-      const res = await fetch(url);
+      // ✅ Fixed: uses proxy API route instead of direct WooCommerce call
+      const res = await fetch(`${REVIEWS_API}?product_id=${productId}`);
       if (!res.ok) {
         setReviews([]);
         return;
@@ -112,18 +103,15 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
       const data: unknown = await res.json();
       const list: ApiReview[] = Array.isArray(data) ? data.filter(isApiReview) : [];
 
-      const mapped: Review[] = list.map((rev) => {
-        const images = parseImageUrlsFromMeta(rev.meta_data);
-        return {
-          id: rev.id,
-          reviewer: rev.reviewer ? String(rev.reviewer) : 'Anonymous',
-          reviewer_email: rev.reviewer_email ? String(rev.reviewer_email) : undefined,
-          review: stripHtml(rev.review ? String(rev.review) : ''),
-          rating: typeof rev.rating === 'number' ? rev.rating : 0,
-          date_created: rev.date_created ? String(rev.date_created) : undefined,
-          images,
-        };
-      });
+      const mapped: Review[] = list.map((rev) => ({
+        id:             rev.id,
+        reviewer:       rev.reviewer ? String(rev.reviewer) : 'Anonymous',
+        reviewer_email: rev.reviewer_email ? String(rev.reviewer_email) : undefined,
+        review:         stripHtml(rev.review ? String(rev.review) : ''),
+        rating:         typeof rev.rating === 'number' ? rev.rating : 0,
+        date_created:   rev.date_created ? String(rev.date_created) : undefined,
+        images:         parseImageUrlsFromMeta(rev.meta_data),
+      }));
 
       setReviews(mapped);
     } catch {
@@ -131,7 +119,13 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId]);
+
+  useEffect(() => {
+    if (productId) {
+      void loadReviews();
+    }
+  }, [productId, loadReviews]);
 
   const submitReview = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -143,24 +137,21 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
       });
       return;
     }
+
     setSubmitting(true);
     try {
-      const url =
-        `${API_BASE}/products/reviews?consumer_key=${CONSUMER_KEY}&consumer_secret=${CONSUMER_SECRET}`;
-
-      const payload = {
-        product_id: productId,
-        review: formData.review,
-        reviewer: formData.reviewer,
-        reviewer_email: formData.reviewer_email || '',
-        rating: formData.rating,
-        status: 'approved',
-      } as const;
-
-      const res = await fetch(url, {
-        method: 'POST',
+      // ✅ Fixed: uses proxy API route
+      const res = await fetch(REVIEWS_API, {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          product_id:     productId,
+          review:         formData.review,
+          reviewer:       formData.reviewer,
+          reviewer_email: formData.reviewer_email || '',
+          rating:         formData.rating,
+          status:         'approved',
+        }),
       });
 
       if (!res.ok) {
@@ -225,12 +216,12 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
           <MessageSquare className="w-4 h-4" />
           <span className="text-sm font-semibold tracking-wide">Customer Feedback</span>
         </div>
-        
+
         <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-[#8B7355] via-[#5D4E37] to-[#8B7355] bg-clip-text text-transparent mb-6 tracking-wide">
           Customer Reviews
         </h2>
-        <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4A574] via-[#C19A6B] to-[#D4A574] mx-auto mb-6 rounded-full shadow-sm"></div>
-        
+        <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4A574] via-[#C19A6B] to-[#D4A574] mx-auto mb-6 rounded-full shadow-sm" />
+
         <div className="flex items-center justify-center gap-4 mb-2">
           <StarRating rating={Math.round(averageRating)} />
           <span className="text-lg font-bold text-[#5D4E37]">
@@ -254,14 +245,17 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
           </button>
         </div>
 
-        {/* Form */}
+        {/* Review Form */}
         {showForm && (
-          <form onSubmit={submitReview} className="mb-12 p-8 border-2 border-[#D4A574]/30 space-y-6 bg-white rounded-2xl shadow-lg">
+          <form
+            onSubmit={submitReview}
+            className="mb-12 p-8 border-2 border-[#D4A574]/30 space-y-6 bg-white rounded-2xl shadow-lg"
+          >
             <h3 className="text-xl font-bold text-[#5D4E37] tracking-wide flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[#D4A574]" />
               Share Your Experience
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-[#5D4E37] mb-2">Name *</label>
@@ -325,10 +319,10 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, productName 
           </form>
         )}
 
-        {/* Reviews */}
+        {/* Reviews List */}
         {loading ? (
           <div className="py-16 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A574] border-t-transparent mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D4A574] border-t-transparent mx-auto mb-4" />
             <p className="text-[#5D4E37] text-base font-medium">Loading reviews...</p>
           </div>
         ) : reviews.length === 0 ? (
