@@ -98,8 +98,14 @@ export default function ProductClient({
     }
   }, [product, currentVariation, trackViewContent])
 
-  const isFruitBox = product?.slug === 'fruit-box' || product?.slug?.includes('fruit-box')
-  const isSuperfood = product?.name?.toLowerCase().includes('superfood') || product?.slug?.includes('superfood')
+  const isFruitBox = !!(
+  product?.slug === 'fruit-box' || product?.slug?.includes('fruit-box')
+)
+
+const isSuperfood = !!(
+  product?.name?.toLowerCase().includes('superfood') ||
+  product?.slug?.includes('superfood')
+)
 
   useEffect(() => {
     setShowMakhanaOffer(isSuperfood && quantity >= 2)
