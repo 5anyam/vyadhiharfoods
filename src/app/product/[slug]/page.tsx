@@ -92,7 +92,7 @@ export async function generateMetadata(
 
   if (!product) {
     return {
-      title: 'Product not found | Amraj',
+      title: 'Product not found | Vyadhihar Foods',
       description: 'The product you are looking for is unavailable.',
       robots: { index: false, follow: false },
     }
@@ -150,14 +150,14 @@ export async function generateMetadata(
 
   const keywords = Array.from(new Set([...baseKeywords, ...intentKeywords]))
 
-  const brand = 'Amraj'
+  const brand = 'Vyadhihar'
   const title = `${product.name} – ${catchyBenefit} | ${brand}`
 
-  const canonical = new URL(`/products/${product.slug}`, 'https://www.amraj.in')
+  const canonical = new URL(`/products/${product.slug}`, 'https://www.vyadhiharfoods.com')
   const imageUrl =
     product.images?.[0]?.src
-      ? new URL(product.images[0].src, 'https://www.amraj.in').toString()
-      : 'https://www.amraj.in/amraj-logo.jpg'
+      ? new URL(product.images[0].src, 'https://www.vyadhiharfoods.com').toString()
+      : 'https://www.vyadhiharfoods.com/vyadhihar-logo.jpg'
 
   const previous = await parent
   const previousOgImages = previous.openGraph?.images ?? []
@@ -185,7 +185,7 @@ export async function generateMetadata(
       images: [imageUrl],
     },
     robots: { index: true, follow: true },
-    metadataBase: new URL('https://www.amraj.in'),
+    metadataBase: new URL('https://www.vyadhiharfoods.com'),
   }
 }
 
